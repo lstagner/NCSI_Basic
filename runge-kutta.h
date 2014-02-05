@@ -27,7 +27,6 @@ class RungeKutta : public Integrator {
   // Convenience constructor which sets coefficients for order 2, 4
   RungeKutta(const double kdt, const GuidingCenter &kGuidingCenter, 
 	     const int kOrder);
-  ~RungeKutta();
   // Map from (t_k, x_k) -> (t_{k+1}, x_{k+1})
   int Step(double &t, Eigen::VectorXd &x);  
   //// Accessors

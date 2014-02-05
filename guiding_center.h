@@ -17,14 +17,12 @@
 
 #include <math.h> // Need this?
 #include <Eigen/Dense>
-#include <stdlib.h> // kModelName_
-#include "em_fields.h"
+#include "em_fields.h"  // Defines electric/magnetic fields
 
 // Guiding Center System
 class GuidingCenter {
  public:
   GuidingCenter(EMFields *em_fields, const double kMu=0.00000225);
-  ~GuidingCenter();
   // Evaluates vector field of ODE. f in \dot{x} = f(x)
   int VectorField(const double kt, const Eigen::VectorXd &kx, 
 		  Eigen::VectorXd &fx) const;
@@ -36,8 +34,8 @@ class GuidingCenter {
   
  private:
   static const int kDimen_ = 4;  //!< Dimension of ODE system
-  const double kMu_;  //!< Magnetic moment
   EMFields *em_fields_;  //!< Pointer to class defining electromagnetic fields
+  const double kMu_;  //!< Magnetic moment
 };
 
 #endif  // GUIDING_CENTER_H_
