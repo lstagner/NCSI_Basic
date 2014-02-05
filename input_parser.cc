@@ -37,26 +37,6 @@ int InputParser::ReadInput(int argc, char** argv){
     ("help", "Produce help message")
   ;
 
-  // Declare hidden options - Not manditory, but helpful on command line
-  po::options_description hidden_options("Hidden Options");
-  hidden_options.add_options()
-    ("input_file", po::value<std::string>(), "Input file defining run options")
-    ("save_nth", po::value<int>()->default_value(1),
-     "Save every save_nth step")
-    ("initial_conditions,x", po::value<std::vector<double> >()
-     ->multitoken()->default_value(std::vector<double>(),""),
-     "Initial conditions")
-  ;
-
-  // Declare output options
-  po::options_description output_options("Output Options");
-  output_options.add_options()
-    ("time,T", po::value<bool>()->default_value(false), 
-     "Print total runtime")
-    ("precision,P", po::value<int>()->default_value(8),
-     "Number of printed digits")
-  ;
-
   // Declare model options
   po::options_description model_options("Model Options");
   model_options.add_options()
@@ -72,6 +52,26 @@ int InputParser::ReadInput(int argc, char** argv){
      "Nonlinear solve tolerance")
     ("max_iter", po::value<int>()->default_value(15),
      "Maximum nonlinear solve iterations")
+  ;
+
+  // Declare output options
+  po::options_description output_options("Output Options");
+  output_options.add_options()
+    ("time,T", po::value<bool>()->default_value(false), 
+     "Print total runtime")
+    ("precision,P", po::value<int>()->default_value(8),
+     "Number of printed digits")
+  ;
+
+  // Declare hidden options - Not manditory, but helpful on command line
+  po::options_description hidden_options("Hidden Options");
+  hidden_options.add_options()
+    ("input_file", po::value<std::string>(), "Input file defining run options")
+    ("save_nth", po::value<int>()->default_value(1),
+     "Save every save_nth step")
+    ("initial_conditions,x", po::value<std::vector<double> >()
+     ->multitoken()->default_value(std::vector<double>(),""),
+     "Initial conditions")
   ;
 
   // Declare all options
