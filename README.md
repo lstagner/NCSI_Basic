@@ -1,12 +1,12 @@
 Non-canonical Symplectic Integrator: Basic 
 ==========================================
 
-Minimalist implementation of calculating guiding center trajectories. A fourth-order Runge-Kutta and noncanonical symplectic algorithm are present for the calculation of charged particle guiding center trajectories in electric and magnetic fields. An axisymmetric tokamak field is used for demonstration. 
+Minimalist implementation of guiding center trajectory calculation. A fourth-order Runge-Kutta and noncanonical symplectic algorithm are present for the calculation of charged particle guiding center trajectories in electric and magnetic fields. An axisymmetric tokamak field is used for demonstration. 
 
 Installation
 ------------
 
-The NCSI:Basic code uses the [BOOST::program_options](www.boost.org) library for option specification and the [Eigen](http://eigen.tuxfamily.org) library for linear algebra tasks. Eigen is a header-only library available at http://eigen.tuxfamily.org/ . The compiler needs to know where to find the header files, so placing the Eigen package somewhere like /usr/local/include is a good idea. 
+The NCSI:Basic code uses the [BOOST::program_options](www.boost.org/) library for option specification and the [Eigen](http://eigen.tuxfamily.org) library for linear algebra tasks. Eigen is a header-only library available at http://eigen.tuxfamily.org/ . The compiler needs to know where to find the header files, so placing the Eigen package somewhere like /usr/local/include is a good idea. 
 
 Usage
 -----
