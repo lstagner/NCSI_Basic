@@ -26,9 +26,10 @@ class Integrator {
       kdt_(kdt), kGuidingCenter_(kGuidingCenter), 
 	kDimen_(kGuidingCenter.kDimen()) {}
   virtual ~Integrator() {}
-  // Map from (t_k, x_k) -> (t_{k+1}, x_{k+1}).  
+  //! Time-advance map from (t_k, x_k) -> (t_{k+1}, x_{k+1}).  
   virtual int Step(double &t, Eigen::VectorXd &x) = 0;
-  virtual void Reset(){}; //!< Method used in multistep integrators
+  //! Method used in multistep integrators
+  virtual void Reset(){}; 
  protected:
   const double kdt_;  //!< Numerical Step Size
   const GuidingCenter &kGuidingCenter_;  //!< ODE model

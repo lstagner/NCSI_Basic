@@ -30,7 +30,7 @@ class EMFields{
   //! Fetch gradient of scalar potential
   virtual void GradPhi(const double kt, const Eigen::VectorXd &kx, 
 		       Eigen::Vector3d &grad_phi) const = 0;
-  // Fetch gradient of magnetic field magnitude
+  //! Fetch gradient of magnetic field magnitude
   virtual void GradModB(const double kt, const Eigen::VectorXd &kx,
 			Eigen::Vector3d &grad_mod_b) const = 0;
 };

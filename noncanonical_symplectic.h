@@ -46,7 +46,7 @@ protected:
   const double kMaxIterations_;  //!< Maximum allowable Newton iterations
   bool needs_initialization_;  //!< Flag for needing initial conditions
   Eigen::MatrixXd x_history_;  //!< Stores previous positions
-  EMFields *em_fields_;
+  EMFields *em_fields_;  //!< Field definitions pulled from GuidingCenter
 };
 
 #endif // NONCANONICAL_SYMPLECTIC_H_

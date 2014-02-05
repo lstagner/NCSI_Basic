@@ -31,7 +31,7 @@ class AxisymmetricTokamak : public EMFields{
   void GradModB(const double kt, const Eigen::VectorXd &kx, 
 		Eigen::Vector3d &grad_mod_b) const;
  private:
-  const double kB0_;
-  const double kR0_;
+  const double kB0_; //!< Magnetic field on-axis amplitude in [Tesla]
+  const double kR0_; //!< Major radius of tokamak in [cm]
 };
 #endif // AXISYMMETRIC_TOKAMAK_H_

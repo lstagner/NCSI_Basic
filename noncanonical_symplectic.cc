@@ -41,8 +41,7 @@ NoncanonicalSymplectic::NoncanonicalSymplectic(const double kdt,
  * @param[in,out] x Vector of current coordinates. Will be updated to x(t+h). 
  * @return Integer code which is 0 if successful. 
  */
-int NoncanonicalSymplectic::Step(double &t, 
-						     Eigen::VectorXd &x){
+int NoncanonicalSymplectic::Step(double &t, Eigen::VectorXd &x){
   if(needs_initialization_){
 
     StoreHistory(x); // x_history_ --> [0, x0]
@@ -79,10 +78,10 @@ int NoncanonicalSymplectic::Step(double &t,
 }
 
 
-/*! StoreHistory updates member x_history_  by knocking off the
- * oldest data and putting on the newest. 
+/*! 
+ * @brief StoreHistory updates member x_history_  by knocking off the oldest data and putting on the newest. 
  * 
- * @param[in] x New position
+ * @param[in] kx New position to store
  * @returns 0 upon success
  */
 int NoncanonicalSymplectic::StoreHistory(const Eigen::VectorXd &kx){
@@ -112,14 +111,14 @@ int NoncanonicalSymplectic::InitialStep(double &t,
 /*!
  * \brief Function which should evaluate to zero(vector) when the algorithm is satisfied.
  *
- * @param[in] t Simulation time at proposed new position
- * @param[in] x New position to test
+ * @param[in] kt Simulation time at proposed new position
+ * @param[in] kx New position to test
  * @param[out] error Error vector which is zero for satisfied update rule.
  * @return Zero for success
  */
 int NoncanonicalSymplectic::UpdateRule(const double kt,
-						 const Eigen::VectorXd &kx,
-						 Eigen::VectorXd &error) const
+				       const Eigen::VectorXd &kx,
+				       Eigen::VectorXd &error) const
 {
   //// Define intermediate variables
   // Conventions: kp1 --> ``k plus 1"

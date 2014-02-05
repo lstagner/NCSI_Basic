@@ -23,7 +23,7 @@ AxisymmetricTokamak::AxisymmetricTokamak(const double kB0, const double kR0):
 /*! 
  * @brief Evaluates Vector potential A
  *                                                                   
- * @param[in] kt Current time (fields time independent)              
+ * @param[in] kUnusedt Current time (fields time independent)              
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] a Vector potential A 
  */ 
@@ -43,7 +43,7 @@ void AxisymmetricTokamak::VectorPotentialA(const double kUnusedt,
 /*! 
  * @brief Evaluates Matrix of derivatives of vector potential A
  *                                                                   
- * @param[in] kt Current time (fields time independent)              
+ * @param[in] kUnusedt Current time (fields time independent)              
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] grad_a Matrix of derivatives of vector potential A 
  */ 
@@ -75,7 +75,7 @@ void AxisymmetricTokamak::GradA(const double kUnusedt,
 /*! 
  * @brief Evaluates Unit vector in the direction of the magnetic field
  *                                                                   
- * @param[in] kt Current time (fields time independent)              
+ * @param[in] kUnusedt Current time (fields time independent)              
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] b_hat Unit vector in the direction of the magnetic field 
  */ 
@@ -95,7 +95,7 @@ void AxisymmetricTokamak::BHat(const double kUnusedt,
 /*! 
  * @brief Evaluates Gradient matrix of magnetic field unit vector
  *                                                                   
- * @param[in] kt Current time (fields time independent)              
+ * @param[in] kUnusedt Current time (fields time independent)              
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] grad_b_hat Gradient matrix of magnetic field unit vector 
  */ 
@@ -127,8 +127,8 @@ void AxisymmetricTokamak::GradBHat(const double kUnusedt,
 /*! 
  * @brief Evaluates Gradient of scalar potential phi
  *                                                                   
- * @param[in] kt Current time (fields time independent)              
- * @param[in] kx Position in cartesian coordinates                   
+ * @param[in] kUnusedt Current time (fields time independent)              
+ * @param[in] kUnusedx Position in cartesian coordinates                   
  * @param[out] grad_phi Gradient of scalar potential phi 
  */ 
 void AxisymmetricTokamak::GradPhi(const double kUnusedt, 
@@ -147,7 +147,7 @@ void AxisymmetricTokamak::GradPhi(const double kUnusedt,
 /*! 
  * @brief Evaluates Gradient of magnetic field magnitude
  *                                                                   
- * @param[in] kt Current time (fields time independent)              
+ * @param[in] kUnusedt Current time (fields time independent)              
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] grad_mod_b Gradient of magnetic field magnitude 
  */ 

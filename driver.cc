@@ -26,6 +26,7 @@
  *
  * @param[in] t Time
  * @param[in] x Position vector
+ * @param[in] n_digits Number of digits to display in output
  */
 void PrintState(double t, const Eigen::VectorXd &x, int n_digits){
   // Formatting options: n_digits precision, all vector elements on one line

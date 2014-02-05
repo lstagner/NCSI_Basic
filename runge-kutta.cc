@@ -19,10 +19,9 @@
   *
   * @param[in] kdt Numerical step size
   * @param[in] kGuidingCenter ODE system being modeled
-  * @param[in] a_coeffs Matrix with a_{ij} coefficients in Butcher tableau
-  * @param[in] b_coeffs Vector with b_i coefficients in Butcher tableau
-  * @param[in] c_coeffs Vector with c_i coefficients in Butcher tableau
-  * 
+  * @param[in] a_coefficients Matrix with a_{ij} coefficients in Butch. tableau
+  * @param[in] b_coefficients Vector with b_i coefficients in Butcher tableau
+  * @param[in] c_coefficients Vector with c_i coefficients in Butcher tableau
   */
 RungeKutta::RungeKutta(const double kdt, const GuidingCenter &kGuidingCenter, 
 		       const Eigen::MatrixXd a_coefficients, 
@@ -40,7 +39,8 @@ RungeKutta::RungeKutta(const double kdt, const GuidingCenter &kGuidingCenter,
   * \brief Constructor which implements common methods for convenience. Specify an order with an integer, and this constructor will set the corresponding coefficients.
   *
   * @param[in] kdt Numerical step size
-  * @param[in] model ODE system being solved
+  * @param[in] kGuidingCenter ODE system being solved
+  * @param[in] kOrder Order of Runge-Kutta method. 2 and 4 are implemented.
   * 
   */
 RungeKutta::RungeKutta(const double kdt, const GuidingCenter &kGuidingCenter, 

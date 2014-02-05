@@ -30,7 +30,7 @@ GuidingCenter::GuidingCenter(EMFields *em_fields, const double kMu)
  *  
  * @param[in] kt Time  
  * @param[in] kx Position of guiding center particle [x u]  
- * @param[out] fx Right hand side of \dot{x} = f(x)  
+ * @param[out] fx Right hand side of dot{x} = f(x)  
  * @return zero if success  
  */
 int GuidingCenter::VectorField(const double kt, const Eigen::VectorXd &kx, Eigen::VectorXd &fx) const {
