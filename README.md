@@ -14,7 +14,7 @@ Usage
 After compiling and linking the executable "driver", see a summary of runtime options using 
 driver --help
 
-The options may be specified on the command line with --<option> or -<O>. Alternatively, one may specify input options using an input file. See sample_input.cfg for an example. Units are discussed in the documentation.
+The options may be specified on the command line with --option or -O. Alternatively, one may specify input options using an input file. See sample_input.cfg for an example. Units are discussed in the documentation.
 
 Upgrade to PRO Today!
 ---------------------
