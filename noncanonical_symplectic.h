@@ -22,8 +22,8 @@
 class NoncanonicalSymplectic : public Integrator{
 public:
   NoncanonicalSymplectic(const double kdt, const GuidingCenter &kGuidingCenter,
-			 const double kNewtonTolerance = 1e-12,
-			 const double kMaxIterations = 15);
+			 const double kNewtonTolerance,
+			 const double kMaxIterations);
   // Method to advance (t_k, x_k) -> (t_k+1, x_k+1)
   int Step(double &t, Eigen::VectorXd &x);
   // Used when running multiple initial conditions to reset state

@@ -60,15 +60,25 @@ int InputParser::ReadInput(int argc, char** argv){
   // Declare model options
   po::options_description model_options("Model Options");
   model_options.add_options()
-    ("mu", po::value<double>()->default_value(0.0), "mu parameter")
-    ("b0", po::value<double>()->default_value(0.0), "magnetic field strength")
-    ("r0", po::value<double>()->default_value(0.0), "radius scale")
+    ("mu", po::value<double>()->default_value(0.21), "mu parameter")
+    ("b0", po::value<double>()->default_value(1.0), "magnetic field strength")
+    ("r0", po::value<double>()->default_value(100.0), "radius scale")
+  ;
+
+  // Declare integrator options
+  po::options_description integrator_options("Integrator Options");
+  integrator_options.add_options()
+    ("tol", po::value<double>()->default_value(1e-12), 
+     "Nonlinear solve tolerance")
+    ("max_iter", po::value<int>()->default_value(15),
+     "Maximum nonlinear solve iterations")
   ;
 
   // Declare all options
   po::options_description all_options("All Options");
   all_options.add(descriptive_options).add(manditory_options).
-    add(hidden_options).add(output_options).add(model_options);
+    add(hidden_options).add(output_options).add(model_options).
+    add(integrator_options);
 
   // Positional option for input file
   po::positional_options_description positional_options;
@@ -83,11 +93,13 @@ int InputParser::ReadInput(int argc, char** argv){
   if (variables_map_.count("help")){
     std::cout << descriptive_options << std::endl
 	      << manditory_options << std::endl
+              << model_options << std::endl
+	      << integrator_options << std::endl
 	      << output_options << std::endl
 	      << "USAGE:" << std::endl
    	      << "driver -I <integrator> -h <double> -N <int>"
    	      << std::endl << "-OR-" << std::endl 
-   	      << "driver <input_file>" << std::endl; 
+   	      << "driver <input_file>" << std::endl << std::endl; 
     return 1;
   }  
 

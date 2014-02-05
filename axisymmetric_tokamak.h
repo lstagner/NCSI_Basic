@@ -17,7 +17,7 @@
 
 class AxisymmetricTokamak : public EMFields{
  public:
-  AxisymmetricTokamak(const double kB0 = 1.0, const double kR0 = 1.0);
+  AxisymmetricTokamak(const double kB0, const double kR0);
   void VectorPotentialA(const double kt, const Eigen::VectorXd &kx,
 			Eigen::Vector3d &a) const;
   void GradA(const double kt, const Eigen::VectorXd &kx, 

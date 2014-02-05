@@ -50,8 +50,8 @@ int main(int argc, char *argv[]) {
   if (read_result){return read_result; } // Quits on, e.g. --help
 
   // Initialize runtime parameters determined by input
-  double dt, b0, r0, mu;
-  int n_steps, save_nth, print_precision;
+  double dt, b0, r0, mu, newton_tolerance;
+  int n_steps, save_nth, print_precision, max_iterations;
   std::vector<double> initial_conditions; 
   bool time_flag;
   std::string integrator_name;
@@ -67,6 +67,8 @@ int main(int argc, char *argv[]) {
   input_parser.GetValue("r0", r0);
   input_parser.GetValue("integrator", integrator_name);
   input_parser.GetValue("mu", mu);
+  input_parser.GetValue("tol", newton_tolerance);
+  input_parser.GetValue("max_iter", max_iterations);
 
   //// Initialize model and integrator
   EMFields *em_fields = new AxisymmetricTokamak(b0, r0);
@@ -76,7 +78,8 @@ int main(int argc, char *argv[]) {
     integrator = new RungeKutta(dt, *guiding_center, 4);
   }
   else if (integrator_name.compare("ncsi")==0){
-    integrator = new NoncanonicalSymplectic(dt, *guiding_center);
+    integrator = new NoncanonicalSymplectic(dt, *guiding_center, 
+					    newton_tolerance, max_iterations);
   }
   else{
     std::cout << "Unrecognized integrator. Try rk4 or ncsi" 
