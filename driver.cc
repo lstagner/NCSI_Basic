@@ -72,14 +72,14 @@ int main(int argc, char *argv[]) {
   EMFields *em_fields = new AxisymmetricTokamak(b0, r0);
   GuidingCenter *guiding_center = new GuidingCenter(em_fields, mu);
   Integrator *integrator;
-  if (integrator_name.compare("runge-kutta4")==0){
+  if (integrator_name.compare("rk4")==0){
     integrator = new RungeKutta(dt, *guiding_center, 4);
   }
-  else if (integrator_name.compare("variational")==0){
+  else if (integrator_name.compare("ncsi")==0){
     integrator = new NoncanonicalSymplectic(dt, *guiding_center);
   }
   else{
-    std::cout << "Unrecognized integrator. Try runge-kutta4 or variational" 
+    std::cout << "Unrecognized integrator. Try rk4 or ncsi" 
 	      << std::endl;
     return 1;
   }
