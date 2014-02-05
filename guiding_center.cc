@@ -38,15 +38,15 @@ GuidingCenter::GuidingCenter(EMFields *em_fields, const double kMu)
 int GuidingCenter::VectorField(const double kt, const Eigen::VectorXd &kx, Eigen::VectorXd &fx) const {
 
   // Declare intermediate convenience variables
-  static Eigen::Vector3d b_hat;  // b_hat = magnetic field unit vector
-  static Eigen::MatrixXd da(3,3);  // Gradient matrix of vector potential
-  static Eigen::MatrixXd db_hat(3,3);  // Gradient matrix of Bfield unit vector
-  static Eigen::Vector3d grad_phi;  // Gradient of scalar potential phi
-  static Eigen::Vector3d grad_mod_b;  // Gradient of magnitute of B field
-  static Eigen::Vector3d b_dag;  // B^dag = curl(A + ub)
-  static Eigen::Vector3d e_dag;  // E^dag = -grad(phi + mu mod_B)
-  static double b_dag_par; // B^dag_parallel =  B^dag dot b
-  static Eigen::Vector3d b_cross_e_dag;  // variable for b x E^dag
+  Eigen::Vector3d b_hat;  // b_hat = magnetic field unit vector
+  Eigen::MatrixXd da(3,3);  // Gradient matrix of vector potential
+  Eigen::MatrixXd db_hat(3,3);  // Gradient matrix of Bfield unit vector
+  Eigen::Vector3d grad_phi;  // Gradient of scalar potential phi
+  Eigen::Vector3d grad_mod_b;  // Gradient of magnitute of B field
+  Eigen::Vector3d b_dag;  // B^dag = curl(A + ub)
+  Eigen::Vector3d e_dag;  // E^dag = -grad(phi + mu mod_B)
+  double b_dag_par; // B^dag_parallel =  B^dag dot b
+  Eigen::Vector3d b_cross_e_dag;  // variable for b x E^dag
 
   // Retrieve fields at current position, time from em_fields_
   //   kx.head(3) picks off the first three elements of the vector kx = [x u]

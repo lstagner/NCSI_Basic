@@ -33,7 +33,7 @@ void PrintState(double t, const Eigen::VectorXd &x, int n_digits){
   // Formatting options: n_digits precision, all vector elements on one line
   static Eigen::IOFormat OneLineNDeep(n_digits, 0, "     ", "     ",
 				      "", "", "", "");
-  std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // static?
+  std::cout.setf( std::ios::fixed, std:: ios::floatfield );
   std::cout << t << "     " << x.format(OneLineNDeep) << std::endl;
 }
 
