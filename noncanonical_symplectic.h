@@ -15,7 +15,7 @@
 #include "guiding_center.h"
 #include "em_fields.h"
 #include "integrator.h"
-#include <stdlib.h>
+#include <iostream> 
 #include <Eigen/Dense>
 #include "runge-kutta.h" // Used in InitialStep
 
