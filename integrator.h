@@ -23,7 +23,7 @@ class Integrator {
    * @param[in] kGuidingCenter ODE Model instance
   */
   Integrator(const double kdt, const GuidingCenter &kGuidingCenter):
-      kdt_(kdt), guiding_center_(kGuidingCenter), 
+      kdt_(kdt), kGuidingCenter_(kGuidingCenter), 
 	kDimen_(kGuidingCenter.kDimen()) {}
   virtual ~Integrator() {}
   // Map from (t_k, x_k) -> (t_{k+1}, x_{k+1}).  
@@ -31,7 +31,7 @@ class Integrator {
   virtual void Reset(){}; //!< Method used in multistep integrators
  protected:
   const double kdt_;  //!< Numerical Step Size
-  const GuidingCenter &guiding_center_;  //!< ODE model
+  const GuidingCenter &kGuidingCenter_;  //!< ODE model
   const int kDimen_;  //!< Dimension of the ODE system
 };
 

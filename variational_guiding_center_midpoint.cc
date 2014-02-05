@@ -25,10 +25,11 @@ VariationalGuidingCenterMidpoint::VariationalGuidingCenterMidpoint(
 					  const GuidingCenter &kGuidingCenter, 
 					  const double kNewtonTolerance,
 					  const double kMaxIterations) 
-  : Integrator(kdt, model), kMu_(kGuidingCenter.kMu()), 
+  : Integrator(kdt, kGuidingCenter), kMu_(kGuidingCenter.kMu()), 
     kNewtonTolerance_(kNewtonTolerance), kMaxIterations_(kMaxIterations),
     needs_initialization_(true), x_history_(kGuidingCenter.kDimen(), 2){
   x_history_.setZero(); // Just to be safe.
+  em_fields_ = kGuidingCenter.em_fields();
 }
 
 
@@ -45,14 +46,14 @@ int VariationalGuidingCenterMidpoint::Step(double &t,
 						     Eigen::VectorXd &x){
   if(needs_initialization_){
 
-    StoreHistory(t, x); // x_history_ --> [0, x0]
+    StoreHistory(x); // x_history_ --> [0, x0]
 
     needs_initialization_ = false; // No longer need init
 
     return InitialStep(t, x); // RK4 advance
   }
   else{
-    StoreHistory(t, x); // x_history_ --> [x_k-1, x_k]
+    StoreHistory(x); // x_history_ --> [x_k-1, x_k]
    
     // Declare local variables used in nonlinear solve
     Eigen::VectorXd error(kDimen_);
@@ -63,7 +64,8 @@ int VariationalGuidingCenterMidpoint::Step(double &t,
     UpdateRule(t, x, error); // Check how far t,x are from solution
     
     // Newton-Rhapson nonlinear solve
-    while((error.norm() > kNewtonTolerance)&&(n_iterations < kMaxIterations_)){
+    while((error.norm() > kNewtonTolerance_) && 
+	  (n_iterations < kMaxIterations_)){
       n_iterations++; // Increment how many times we've done this
       Jacobian(t, x, jacobian);  // Fetch new Jacobian
       x -= jacobian.inverse()*error; // Adjust x
@@ -86,11 +88,10 @@ int VariationalGuidingCenterMidpoint::Step(double &t,
  */
 int VariationalGuidingCenterMidpoint::StoreHistory(const Eigen::VectorXd &kx){
   // Shift everything back one
-  for(int i=0; i<n_steps_-1; ++i){
-    x_history_.col(i) = x_history_.col(i+1);
-  }
+  x_history_.col(0) = x_history_.col(1);
+  
   // Next, write the new data at the end
-  x_history_.col(n_steps_-1) = x;
+  x_history_.col(1) = kx;
 
   return 0;
 }
@@ -104,7 +105,7 @@ int VariationalGuidingCenterMidpoint::StoreHistory(const Eigen::VectorXd &kx){
  */
 int VariationalGuidingCenterMidpoint::InitialStep(double &t, 
 						  Eigen::VectorXd &x) const{
-  RungeKutta4 rk4(kdt_, model_);
+  RungeKutta rk4(kdt_, kGuidingCenter_, 4);
   return rk4.Step(t,x);
 }
 
@@ -216,7 +217,7 @@ int VariationalGuidingCenterMidpoint::NewtonGuess(double &t,
   Eigen::VectorXd fx(kDimen_);
 
   // Fetch f(x) in \dot{x} = f(x)
-  kGuidingCenter.VectorField(t,x,fx); 
+  kGuidingCenter_.VectorField(t,x,fx); 
   t += kdt_;
   x = x + kdt_*fx; 
   return 0;

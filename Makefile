@@ -1,5 +1,5 @@
 MODELS = guiding_center.o axisymmetric_tokamak.o
-INTEGRATORS = runge-kutta.o # variational_guiding_center_midpoint.o 
+INTEGRATORS = runge-kutta.o variational_guiding_center_midpoint.o 
 
 DRIVER_DEPENDS = input_parser.o $(INTEGRATORS) $(MODELS) 
 

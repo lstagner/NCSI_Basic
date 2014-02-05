@@ -28,7 +28,8 @@ class GuidingCenter {
 		  Eigen::VectorXd &fx) const;
 
   // Accessors
-  //! Return name
+  //! Return pointer to em_fields instance
+  EMFields *em_fields() const { return em_fields_; }
   int kDimen() const {return kDimen_; }  //!< Return dimension of ODE system
   double kMu() const {return kMu_;}  //!< Return value of mu
   

@@ -13,10 +13,11 @@
 #define VARIATIONAL_GUIDING_CENTER_MIDPOINT_H_
 
 #include "guiding_center.h"
+#include "em_fields.h"
 #include "integrator.h"
 #include <stdlib.h>
 #include <Eigen/Dense>
-#include "runge-kutta4.h" // Used in InitialStep
+#include "runge-kutta.h" // Used in InitialStep
 
 class VariationalGuidingCenterMidpoint : public Integrator{
 public:
@@ -45,7 +46,8 @@ protected:
   const double kNewtonTolerance_;  //!< Error threshold for nonlinear solve
   const double kMaxIterations_;  //!< Maximum allowable Newton iterations
   bool needs_initialization_;  //!< Flag for needing initial conditions
-  Eigen::MaxtrixXd x_history_;  //!< Stores previous positions
+  Eigen::MatrixXd x_history_;  //!< Stores previous positions
+  EMFields *em_fields_;
 };
 
 #endif // VARIATIONAL_GUIDING_CENTER_MIDPOINT_H_

@@ -98,7 +98,7 @@ int RungeKutta::Step(double &t, Eigen::VectorXd &x) {
       xtemp_ += a_(i,j)*k_.col(j);
     }
     // Evaluate the rhs at x_temp to determine k
-    guiding_center_.VectorField(t + c_(i)*kdt_, xtemp_, ftemp_);
+    kGuidingCenter_.VectorField(t + c_(i)*kdt_, xtemp_, ftemp_);
     k_.col(i) = kdt_*ftemp_;
   }
 
