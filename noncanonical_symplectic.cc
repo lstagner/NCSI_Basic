@@ -126,28 +126,28 @@ int NoncanonicalSymplectic::UpdateRule(const double kt,
   //              km1 --> ``k minus 1"
   //              kphalf --> ``k plus 1/2"
   //              kmhalf --> ``k minus 1/2"
-  static double t_kphalf;
-  static double t_kmhalf;
-  static Eigen::Vector3d x_kphalf;
-  static Eigen::Vector3d x_kmhalf;
-  static Eigen::Vector3d delta_x_kphalf;
-  static Eigen::Vector3d delta_x_kmhalf;
-  static Eigen::Vector3d a_kphalf;
-  static Eigen::Vector3d a_kmhalf;
-  static Eigen::Vector3d b_hat_kphalf;
-  static Eigen::Vector3d b_hat_kmhalf;
-  static Eigen::MatrixXd grad_a_kphalf(3,3);
-  static Eigen::MatrixXd grad_a_kmhalf(3,3);
-  static Eigen::MatrixXd grad_b_hat_kphalf(3,3);
-  static Eigen::MatrixXd grad_b_hat_kmhalf(3,3);
-  static Eigen::Vector3d grad_mod_b_kphalf;
-  static Eigen::Vector3d grad_mod_b_kmhalf;
-  static Eigen::Vector3d grad_phi_kphalf;
-  static Eigen::Vector3d grad_phi_kmhalf;
-  static Eigen::MatrixXd grad_a_dag_kphalf(3,3);
-  static Eigen::MatrixXd grad_a_dag_kmhalf(3,3);
-  static Eigen::Vector3d a_dag_kphalf;
-  static Eigen::Vector3d a_dag_kmhalf;
+  double t_kphalf;
+  double t_kmhalf;
+  Eigen::Vector3d x_kphalf;
+  Eigen::Vector3d x_kmhalf;
+  Eigen::Vector3d delta_x_kphalf;
+  Eigen::Vector3d delta_x_kmhalf;
+  Eigen::Vector3d a_kphalf;
+  Eigen::Vector3d a_kmhalf;
+  Eigen::Vector3d b_hat_kphalf;
+  Eigen::Vector3d b_hat_kmhalf;
+  Eigen::MatrixXd grad_a_kphalf(3,3);
+  Eigen::MatrixXd grad_a_kmhalf(3,3);
+  Eigen::MatrixXd grad_b_hat_kphalf(3,3);
+  Eigen::MatrixXd grad_b_hat_kmhalf(3,3);
+  Eigen::Vector3d grad_mod_b_kphalf;
+  Eigen::Vector3d grad_mod_b_kmhalf;
+  Eigen::Vector3d grad_phi_kphalf;
+  Eigen::Vector3d grad_phi_kmhalf;
+  Eigen::MatrixXd grad_a_dag_kphalf(3,3);
+  Eigen::MatrixXd grad_a_dag_kmhalf(3,3);
+  Eigen::Vector3d a_dag_kphalf;
+  Eigen::Vector3d a_dag_kmhalf;
   
   //// Update intermediate variables
   // t coming in is t_kp1. Define t_kphalf, tkmhalf
@@ -238,9 +238,9 @@ int NoncanonicalSymplectic::Jacobian(const double kt,
 
   double delta = 1e-5; // Step size for finite difference
 
-  static Eigen::VectorXd left_evaluation(kDimen_);
-  static Eigen::VectorXd right_evaluation(kDimen_);
-  static Eigen::MatrixXd eye = Eigen::MatrixXd::Identity(kDimen_, kDimen_);
+  Eigen::VectorXd left_evaluation(kDimen_);
+  Eigen::VectorXd right_evaluation(kDimen_);
+  Eigen::MatrixXd eye = Eigen::MatrixXd::Identity(kDimen_, kDimen_);
 
   // jacobian needs to be kDimen by kDimen!
   for (int i=0; i<kDimen_; ++i){
