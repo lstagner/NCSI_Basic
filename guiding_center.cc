@@ -15,9 +15,7 @@
  * @brief Constructor which sets magnetic moment and initializes fields 
  * 
  * @param[in] em_fields
- * @param[in] kMu Magnetic moment in XXX 
- * @param[in] kB0 Magnetic field strength in [Tesla]
- * 
+ * @param[in] kMu Magnetic moment in [cm^2/10^-8 s] 
  */
 GuidingCenter::GuidingCenter(EMFields *em_fields, const double kMu) 
   : em_fields_(em_fields), kMu_(kMu){}

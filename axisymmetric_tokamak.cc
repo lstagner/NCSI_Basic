@@ -11,6 +11,12 @@
 
 #include "axisymmetric_tokamak.h"
 
+/*!
+ * @brief Construct AxisymmetricTokamak which derives from EMFields. Set constants b0, r0.
+ * 
+ * @param[in] kB0 Magnetic field strength in [Tesla] (see documentation)
+ * @param[in] kR0 Major radius of tokamak in [cm]
+ */
 AxisymmetricTokamak::AxisymmetricTokamak(const double kB0, const double kR0): 
   kB0_(kB0), kR0_(kR0){}
 
