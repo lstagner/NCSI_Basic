@@ -21,7 +21,7 @@
 #include "axisymmetric_tokamak.h"
 #include "integrator.h"
 #include "runge-kutta.h"
-//#include "variational_guiding_center_midpoint.h"
+#include "variational_guiding_center_midpoint.h"
 
 /*!
  * \brief Prints a line to standard out giving [time x[0] x[1] ....]
@@ -75,9 +75,9 @@ int main(int argc, char *argv[]) {
   if (integrator_name.compare("runge-kutta4")==0){
     integrator = new RungeKutta(dt, *guiding_center, 4);
   }
-  // else if (integrator_name.compare("variational")==0){
-  //   integrator = new VariationalGuidingCenterMidpoint(dt, *guiding_center)
-  // }
+  else if (integrator_name.compare("variational")==0){
+    integrator = new VariationalGuidingCenterMidpoint(dt, *guiding_center);
+  }
   else{
     std::cout << "Unrecognized integrator. Try runge-kutta4 or variational" 
 	      << std::endl;
