@@ -43,7 +43,7 @@ int InputParser::ReadInput(int argc, char** argv){
     ("input_file", po::value<std::string>(), "Input file defining run options")
     ("save_nth", po::value<int>()->default_value(1),
      "Save every save_nth step")
-    ("initial_conditions, x", po::value<std::vector<double> >()
+    ("initial_conditions,x", po::value<std::vector<double> >()
      ->multitoken()->default_value(std::vector<double>(),""),
      "Initial conditions")
   ;
