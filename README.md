@@ -6,7 +6,7 @@ Minimalist implementation of guiding center trajectory calculation. A fourth-ord
 Installation
 ------------
 
-The NCSI:Basic code uses the [BOOST::program_options](www.boost.org/) library for option specification and the [Eigen](http://eigen.tuxfamily.org) library for linear algebra tasks. Eigen is a header-only library available at http://eigen.tuxfamily.org/ . The compiler needs to know where to find the header files, so placing the Eigen package somewhere like /usr/local/include is a good idea. 
+The NCSI:Basic code uses the [BOOST::program_options](http://boost.org/) library for option specification and the [Eigen](http://eigen.tuxfamily.org) library for linear algebra tasks. Eigen is a header-only library available at http://eigen.tuxfamily.org/ . The compiler needs to know where to find the header files, so placing the Eigen package somewhere like /usr/local/include is a good idea. 
 
 Usage
 -----
@@ -24,4 +24,4 @@ Full version of NCSI includes:
 * Improved class hierarchy (ImplicitIntegrator, MultistepIntegrator)
 * Automatic differentiation (with [ADOLC](https://projects.coin-or.org/ADOL-C))
 * Field writing routines (with Python and Sympy)
-* Unittests (using [gTest](http://code.google.com/p/googletest/)
+* Unittests (using [gTest](http://code.google.com/p/googletest/))
