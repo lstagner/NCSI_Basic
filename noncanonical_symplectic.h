@@ -1,6 +1,6 @@
 /*!
 *******************************************************************************
-* \file variational_guiding_center_midpoint.h
+* \file noncanonical_symplectic.h
 *
 * \brief Header for integrator resulting from a midpoint discretization of the guiding center Lagrangian. 
 *
@@ -9,8 +9,8 @@
 *******************************************************************************
 */
 
-#ifndef VARIATIONAL_GUIDING_CENTER_MIDPOINT_H_
-#define VARIATIONAL_GUIDING_CENTER_MIDPOINT_H_
+#ifndef NONCANONICAL_SYMPLECTIC_H_
+#define NONCANONICAL_SYMPLECTIC_H_
 
 #include "guiding_center.h"
 #include "em_fields.h"
@@ -19,12 +19,11 @@
 #include <Eigen/Dense>
 #include "runge-kutta.h" // Used in InitialStep
 
-class VariationalGuidingCenterMidpoint : public Integrator{
+class NoncanonicalSymplectic : public Integrator{
 public:
-  VariationalGuidingCenterMidpoint(const double kdt, 
-				   const GuidingCenter &kGuidingCenter,
-				   const double kNewtonTolerance = 1e-12,
-				   const double kMaxIterations = 15);
+  NoncanonicalSymplectic(const double kdt, const GuidingCenter &kGuidingCenter,
+			 const double kNewtonTolerance = 1e-12,
+			 const double kMaxIterations = 15);
   // Method to advance (t_k, x_k) -> (t_k+1, x_k+1)
   int Step(double &t, Eigen::VectorXd &x);
   // Used when running multiple initial conditions to reset state
@@ -50,4 +49,4 @@ protected:
   EMFields *em_fields_;
 };
 
-#endif // VARIATIONAL_GUIDING_CENTER_MIDPOINT_H_
+#endif // NONCANONICAL_SYMPLECTIC_H_

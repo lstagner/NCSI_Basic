@@ -1,6 +1,6 @@
 /*!
 *******************************************************************************
-* \file variational_guiding_center_midpoint.cc
+* \file noncanonical_symplectic.cc
 *
 * \brief Implementation of integrator resulting from a midpoint discretization of the guiding center Lagrangian. Implements a step which interfaces with the base class integrators and defines the update rule. 
 *
@@ -9,7 +9,7 @@
 *******************************************************************************
 */
 
-#include "variational_guiding_center_midpoint.h"
+#include "noncanonical_symplectic.h"
 
 /*!
  * Constructor - Initializes members and base class Integrator. Sets size of
@@ -20,8 +20,7 @@
  * @param[in] kNewtonTolerance Error threshold for nonlinear solve
  * @param[in] kMaxIterations Maximum number of nonlinear solve iterations
  */
-VariationalGuidingCenterMidpoint::VariationalGuidingCenterMidpoint(
-					  const double kdt, 
+NoncanonicalSymplectic::NoncanonicalSymplectic(const double kdt, 
 					  const GuidingCenter &kGuidingCenter, 
 					  const double kNewtonTolerance,
 					  const double kMaxIterations) 
@@ -42,7 +41,7 @@ VariationalGuidingCenterMidpoint::VariationalGuidingCenterMidpoint(
  * @param[in,out] x Vector of current coordinates. Will be updated to x(t+h). 
  * @return Integer code which is 0 if successful. 
  */
-int VariationalGuidingCenterMidpoint::Step(double &t, 
+int NoncanonicalSymplectic::Step(double &t, 
 						     Eigen::VectorXd &x){
   if(needs_initialization_){
 
@@ -86,7 +85,7 @@ int VariationalGuidingCenterMidpoint::Step(double &t,
  * @param[in] x New position
  * @returns 0 upon success
  */
-int VariationalGuidingCenterMidpoint::StoreHistory(const Eigen::VectorXd &kx){
+int NoncanonicalSymplectic::StoreHistory(const Eigen::VectorXd &kx){
   // Shift everything back one
   x_history_.col(0) = x_history_.col(1);
   
@@ -103,7 +102,7 @@ int VariationalGuidingCenterMidpoint::StoreHistory(const Eigen::VectorXd &kx){
  * @param[in,out] x Position. At in: x(t=t_k) At out: x(t=t_k+1)
  * @returns 0 upon success
  */
-int VariationalGuidingCenterMidpoint::InitialStep(double &t, 
+int NoncanonicalSymplectic::InitialStep(double &t, 
 						  Eigen::VectorXd &x) const{
   RungeKutta rk4(kdt_, kGuidingCenter_, 4);
   return rk4.Step(t,x);
@@ -118,7 +117,7 @@ int VariationalGuidingCenterMidpoint::InitialStep(double &t,
  * @param[out] error Error vector which is zero for satisfied update rule.
  * @return Zero for success
  */
-int VariationalGuidingCenterMidpoint::UpdateRule(const double kt,
+int NoncanonicalSymplectic::UpdateRule(const double kt,
 						 const Eigen::VectorXd &kx,
 						 Eigen::VectorXd &error) const
 {
@@ -211,7 +210,7 @@ int VariationalGuidingCenterMidpoint::UpdateRule(const double kt,
  * @param[in,out] x Position to advance to initial guess for solver
  * @return Zero for success
  */
-int VariationalGuidingCenterMidpoint::NewtonGuess(double &t, 
+int NoncanonicalSymplectic::NewtonGuess(double &t, 
 						  Eigen::VectorXd &x) const {
   // Stores output of VectorField
   Eigen::VectorXd fx(kDimen_);
@@ -232,7 +231,7 @@ int VariationalGuidingCenterMidpoint::NewtonGuess(double &t,
  * @param[out] jacobian derivative of the update rule w.r.t the new position
  * @return Integer code which is 0 if successful. 
  */
-int VariationalGuidingCenterMidpoint::Jacobian(const double kt, 
+int NoncanonicalSymplectic::Jacobian(const double kt, 
 					       const Eigen::VectorXd &kx, 
 					       Eigen::MatrixXd &jacobian) 
   const{
