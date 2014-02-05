@@ -85,9 +85,9 @@ int InputParser::ReadInput(int argc, char** argv){
 	      << manditory_options << std::endl
 	      << output_options << std::endl
 	      << "USAGE:" << std::endl
-   	      << "code_solver -M <model> -I <integrator> -h <double> -N <int>"
+   	      << "driver -I <integrator> -h <double> -N <int>"
    	      << std::endl << "-OR-" << std::endl 
-   	      << "code_solver <input_file>" << std::endl; 
+   	      << "driver <input_file>" << std::endl; 
     return 1;
   }  
 

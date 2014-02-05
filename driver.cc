@@ -47,9 +47,7 @@ int main(int argc, char *argv[]) {
   InputParser input_parser;
   int read_result;
   read_result = input_parser.ReadInput(argc, argv);
-  if (read_result){ 
-    std::cout << "Error reading input" << std::endl;
-    return read_result; }
+  if (read_result){return read_result; } // Quits on, e.g. --help
 
   // Initialize runtime parameters determined by input
   double dt, b0, r0, mu;
