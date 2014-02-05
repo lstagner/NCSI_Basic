@@ -12,9 +12,10 @@
 #ifndef RUNGEKUTTA_H_
 #define RUNGEKUTTA_H_
 
-#include "integrator.h"
-#include <Eigen/Dense>
-#include "guiding_center.h"
+#include "integrator.h"  // Abstract base class
+#include <Eigen/Dense>  // Linear algebra operations 
+#include "guiding_center.h"  // ODE being modeled
+#include <iostream>  // Outputting messages
 
 class RungeKutta : public Integrator {
  public:
@@ -24,7 +25,8 @@ class RungeKutta : public Integrator {
 	     const Eigen::VectorXd b_coefficients, 
 	     const Eigen::VectorXd c_coefficients);
   // Convenience constructor which sets coefficients for order 2, 4
-  RungeKutta(const double kdt, const Model &model, const int kOrder);
+  RungeKutta(const double kdt, const GuidingCenter &kGuidingCenter, 
+	     const int kOrder);
   ~RungeKutta();
   // Map from (t_k, x_k) -> (t_{k+1}, x_{k+1})
   int Step(double &t, Eigen::VectorXd &x);  

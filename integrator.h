@@ -23,7 +23,8 @@ class Integrator {
    * @param[in] kGuidingCenter ODE Model instance
   */
   Integrator(const double kdt, const GuidingCenter &kGuidingCenter):
-      kdt_(kdt), model_(model), kDimen_(model.kDimen()) {}
+      kdt_(kdt), guiding_center_(kGuidingCenter), 
+	kDimen_(kGuidingCenter.kDimen()) {}
   virtual ~Integrator() {}
   // Map from (t_k, x_k) -> (t_{k+1}, x_{k+1}).  
   virtual int Step(double &t, Eigen::VectorXd &x) = 0;

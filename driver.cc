@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   int read_result;
   read_result = input_parser.ReadInput(argc, argv);
   if (read_result){ 
-    std::out << "Error reading input" << std::endl;
+    std::cout << "Error reading input" << std::endl;
     return read_result; }
 
   // Initialize runtime parameters determined by input
@@ -72,14 +72,14 @@ int main(int argc, char *argv[]) {
 
   //// Initialize model and integrator
   EMFields *em_fields = new AxisymmetricTokamak(b0, r0);
-  GuidingCenter *guiding_center = new GuidingCenter(em_fields, mu)
+  GuidingCenter *guiding_center = new GuidingCenter(em_fields, mu);
   Integrator *integrator;
   if (integrator_name.compare("runge-kutta4")==0){
     integrator = new RungeKutta(dt, *guiding_center, 4);
   }
-  else if (integrator_name.compare("variational")==0){
-    integrator = new VariationalGuidingCenterMidpoint(dt, *guiding_center)
-  }
+  // else if (integrator_name.compare("variational")==0){
+  //   integrator = new VariationalGuidingCenterMidpoint(dt, *guiding_center)
+  // }
   else{
     std::cout << "Unrecognized integrator. Try runge-kutta4 or variational" 
 	      << std::endl;
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
   
   // If no initial conditions specified or they are of the wrong dimension
   if((!initial_conditions.size()) || 
-     (initial_conditions.size() % (model->kDimen()) )){
+     (initial_conditions.size() % (guiding_center->kDimen()) )){
     // Use the default initial conditions: Vector of ones
     n_initial_conditions = 1;
     for (int i = 0; i < x.size(); ++i) {
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
   }
   else{
    // Otherwise, we have more than one initial condition to simulate
-   n_initial_conditions = initial_conditions.size()/model->kDimen();
+   n_initial_conditions = initial_conditions.size()/guiding_center->kDimen();
   }
 
   //// Record time?
@@ -116,8 +116,8 @@ int main(int argc, char *argv[]) {
     integrator->Reset(); // Resets temporary variables in integrators
     double t = 0;
     // Set initial condition
-    for (int i=0; i<model->kDimen(); ++i){
-      x[i] = initial_conditions[j*model->kDimen() + i];
+    for (int i=0; i<guiding_center->kDimen(); ++i){
+      x[i] = initial_conditions[j*guiding_center->kDimen() + i];
     }
     PrintState(t, x, print_precision); // Print initial position
     // Run standard stepping

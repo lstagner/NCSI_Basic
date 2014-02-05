@@ -28,7 +28,7 @@ RungeKutta::RungeKutta(const double kdt, const GuidingCenter &kGuidingCenter,
 		       const Eigen::MatrixXd a_coefficients, 
 		       const Eigen::VectorXd b_coefficients, 
 		       const Eigen::VectorXd c_coefficients)
-  :   Integrator(kdt, model), a_(a_coefficients), b_(b_coefficients),
+  :   Integrator(kdt, kGuidingCenter), a_(a_coefficients), b_(b_coefficients),
       c_(c_coefficients) { 
   k_.resize(kDimen_, a_.cols());
   xtemp_.resize(kDimen_);
@@ -44,7 +44,7 @@ RungeKutta::RungeKutta(const double kdt, const GuidingCenter &kGuidingCenter,
   * 
   */
 RungeKutta::RungeKutta(const double kdt, const GuidingCenter &kGuidingCenter, 
-		       const int kOrder) : Integrator(kdt, model) {
+		       const int kOrder) : Integrator(kdt, kGuidingCenter) {
   //// Set size of matrices
   a_ = Eigen::MatrixXd::Zero(kOrder,kOrder);
   b_ = Eigen::MatrixXd::Zero(kOrder, 1);
