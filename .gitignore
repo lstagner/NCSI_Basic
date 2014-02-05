@@ -1,3 +1,6 @@
 *~
 *.o
 driver
+doc/chapter_2.md
+doc/doxygen_config
+doc/latex/
