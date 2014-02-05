@@ -1,16 +1,27 @@
 Non-canonical Symplectic Integrator: Basic 
 ==========================================
 
-Minimalist implementation of non-canonical symplectic guiding center integration. A fourth-order Runge-Kutta and variational midpoint algorithm are present for the calculation of charged particle guiding center trajectories in electric and magnetic fields. An axisymmetric tokamak field is used for demonstration. Basic python routines are present for plotting the results.  
+Minimalist implementation of calculating guiding center trajectories. A fourth-order Runge-Kutta and noncanonical symplectic algorithm are present for the calculation of charged particle guiding center trajectories in electric and magnetic fields. An axisymmetric tokamak field is used for demonstration. 
 
 Installation
-=============
+------------
 
-The NCSI:Basic code uses the BOOST::program_options library for option specification and the Eigen library for linear algebra tasks. Eigen is a header-only library available at: . 
+The NCSI:Basic code uses the [BOOST::program_options](www.boost.org) library for option specification and the [Eigen](http://eigen.tuxfamily.org) library for linear algebra tasks. Eigen is a header-only library available at http://eigen.tuxfamily.org/ . The compiler needs to know where to find the header files, so placing the Eigen package somewhere like /usr/local/include is a good idea. 
 
 Usage
-=====
+-----
+
+After compiling and linking the executable "driver", see a summary of runtime options using 
+driver --help
+
+The options may be specified on the command line with --<option> or -<O>. Alternatively, one may specify input options using an input file. See sample_input.cfg for an example. Units are discussed in the documentation.
 
 Upgrade to PRO Today!
-==============
-Full version of NCSI implements additional ODE systems (e.g. oscillators, magnetic field line flow) and integrators (e. g. linear multistep methods, implicit midpoint). Additional abstract base clases (e.g. implicit integrator, multistep integrator) facilitate code re-use across integration methods. The use of automatic differentiation, using the ADOLC library, streamlines implementation of variational integrators by only requiring Lagrangian functions to be implemented. Without automatic differentiation, the user must implement the update rule and Jacobian used in the nonlinear solve. Both of these are more easily derived from a Lagrangian function which can be differentiated to arbitrary order using ADOLC. 
+---------------------
+Full version of NCSI includes:
+* Additional ODE systems (oscillators, magnetic field line flow)
+* Additional integrators (linear multistep methods, implicit midpoint)
+* Improved class hierarchy (ImplicitIntegrator, MultistepIntegrator)
+* Automatic differentiation (with [ADOLC](https://projects.coin-or.org/ADOL-C))
+* Field writing routines (with Python and Sympy)
+* Unittests (using [gTest](http://code.google.com/p/googletest/)
