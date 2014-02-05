@@ -21,7 +21,9 @@ AxisymmetricTokamak::AxisymmetricTokamak(const double kB0, const double kR0):
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] a Vector potential A 
  */ 
-void AxisymmetricTokamak::VectorPotentialA(const double kt, const Eigen::VectorXd &kx, Eigen::Vector3d &a) const{ 
+void AxisymmetricTokamak::VectorPotentialA(const double kUnusedt, 
+					   const Eigen::VectorXd &kx, 
+					   Eigen::Vector3d &a) const{ 
  
   a(0) = kB0_*kR0_*kx[2]/(2*kx[0]);
  
@@ -39,7 +41,9 @@ void AxisymmetricTokamak::VectorPotentialA(const double kt, const Eigen::VectorX
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] grad_a Matrix of derivatives of vector potential A 
  */ 
-void AxisymmetricTokamak::GradA(const double kt, const Eigen::VectorXd &kx, Eigen::MatrixXd &grad_a) const{ 
+void AxisymmetricTokamak::GradA(const double kUnusedt, 
+				const Eigen::VectorXd &kx, 
+				Eigen::MatrixXd &grad_a) const{ 
  
   grad_a(0,0) = -kB0_*kR0_*kx[2]/(2*pow(kx[0], 2));
  
@@ -69,7 +73,9 @@ void AxisymmetricTokamak::GradA(const double kt, const Eigen::VectorXd &kx, Eige
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] b_hat Unit vector in the direction of the magnetic field 
  */ 
-void AxisymmetricTokamak::BHat(const double kt, const Eigen::VectorXd &kx, Eigen::Vector3d &b_hat) const{ 
+void AxisymmetricTokamak::BHat(const double kUnusedt, 
+			       const Eigen::VectorXd &kx, 
+			       Eigen::Vector3d &b_hat) const{ 
  
   b_hat(0) = -sqrt(2)*kB0_*kx[2]/(2*kx[0]*sqrt(pow(kB0_, 2)*pow(kR0_, 2)/pow(kx[0], 2) + pow(kB0_, 2)*pow(kx[2], 2)/(2*pow(kx[0], 2)) + pow(kB0_, 2)*pow(-2*kR0_ + 2*kx[0], 2)/(8*pow(kx[0], 2))));
  
@@ -87,7 +93,9 @@ void AxisymmetricTokamak::BHat(const double kt, const Eigen::VectorXd &kx, Eigen
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] grad_b_hat Gradient matrix of magnetic field unit vector 
  */ 
-void AxisymmetricTokamak::GradBHat(const double kt, const Eigen::VectorXd &kx, Eigen::MatrixXd &grad_b_hat) const{ 
+void AxisymmetricTokamak::GradBHat(const double kUnusedt, 
+				   const Eigen::VectorXd &kx, 
+				   Eigen::MatrixXd &grad_b_hat) const{ 
  
   grad_b_hat(0,0) = -sqrt(2)*kB0_*kx[2]*(pow(kB0_, 2)*pow(kR0_, 2)/pow(kx[0], 3) - pow(kB0_, 2)*(-8*kR0_ + 8*kx[0])/(16*pow(kx[0], 2)) + pow(kB0_, 2)*pow(kx[2], 2)/(2*pow(kx[0], 3)) + pow(kB0_, 2)*pow(-2*kR0_ + 2*kx[0], 2)/(8*pow(kx[0], 3)))/(2*kx[0]*pow(pow(kB0_, 2)*pow(kR0_, 2)/pow(kx[0], 2) + pow(kB0_, 2)*pow(kx[2], 2)/(2*pow(kx[0], 2)) + pow(kB0_, 2)*pow(-2*kR0_ + 2*kx[0], 2)/(8*pow(kx[0], 2)), 3.0/2.0)) + sqrt(2)*kB0_*kx[2]/(2*pow(kx[0], 2)*sqrt(pow(kB0_, 2)*pow(kR0_, 2)/pow(kx[0], 2) + pow(kB0_, 2)*pow(kx[2], 2)/(2*pow(kx[0], 2)) + pow(kB0_, 2)*pow(-2*kR0_ + 2*kx[0], 2)/(8*pow(kx[0], 2))));
  
@@ -117,7 +125,9 @@ void AxisymmetricTokamak::GradBHat(const double kt, const Eigen::VectorXd &kx, E
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] grad_phi Gradient of scalar potential phi 
  */ 
-void AxisymmetricTokamak::GradPhi(const double kt, const Eigen::VectorXd &kx, Eigen::Vector3d &grad_phi) const{ 
+void AxisymmetricTokamak::GradPhi(const double kUnusedt, 
+				  const Eigen::VectorXd &kUnusedx, 
+				  Eigen::Vector3d &grad_phi) const{ 
  
   grad_phi(0) = 0;
  
@@ -135,7 +145,9 @@ void AxisymmetricTokamak::GradPhi(const double kt, const Eigen::VectorXd &kx, Ei
  * @param[in] kx Position in cartesian coordinates                   
  * @param[out] grad_mod_b Gradient of magnetic field magnitude 
  */ 
-void AxisymmetricTokamak::GradModB(const double kt, const Eigen::VectorXd &kx, Eigen::Vector3d &grad_mod_b) const{ 
+void AxisymmetricTokamak::GradModB(const double kUnusedt, 
+				   const Eigen::VectorXd &kx, 
+				   Eigen::Vector3d &grad_mod_b) const{ 
  
   grad_mod_b(0) = (-pow(kB0_, 2)*pow(kR0_, 2)/pow(kx[0], 3) + pow(kB0_, 2)*(-8*kR0_ + 8*kx[0])/(16*pow(kx[0], 2)) - pow(kB0_, 2)*pow(kx[2], 2)/(2*pow(kx[0], 3)) - pow(kB0_, 2)*pow(-2*kR0_ + 2*kx[0], 2)/(8*pow(kx[0], 3)))/sqrt(pow(kB0_, 2)*pow(kR0_, 2)/pow(kx[0], 2) + pow(kB0_, 2)*pow(kx[2], 2)/(2*pow(kx[0], 2)) + pow(kB0_, 2)*pow(-2*kR0_ + 2*kx[0], 2)/(8*pow(kx[0], 2)));
  
