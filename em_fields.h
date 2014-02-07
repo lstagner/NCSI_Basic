@@ -33,6 +33,9 @@ class EMFields{
   //! Fetch gradient of magnetic field magnitude
   virtual void GradModB(const double kt, const Eigen::VectorXd &kx,
 			Eigen::Vector3d &grad_mod_b) const = 0;
+  // Accessors for parameters which may be set in derived classes
+  virtual double kR0() const { return 0.0; }
+  virtual double kB0() const { return 0.0; }
 };
 
 
