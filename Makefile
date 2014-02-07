@@ -1,7 +1,8 @@
-MODELS = guiding_center.o axisymmetric_tokamak.o
+MODELS = guiding_center.o 
 INTEGRATORS = runge-kutta.o noncanonical_symplectic.o 
+FIELDS = axisymmetric_tokamak.o
 
-DRIVER_DEPENDS = input_parser.o $(INTEGRATORS) $(MODELS) 
+DRIVER_DEPENDS = input_parser.o $(INTEGRATORS) $(MODELS) $(FIELDS)
 
 CXXFLAGS = -g -Wall -Wextra -std=c++0x
 BOOSTFLAGS = -L /usr/local/lib -lboost_program_options
@@ -17,8 +18,14 @@ driver.o : driver.cc input_parser.h guiding_center.h
 input_parser.o : input_parser.cc input_parser.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-# Static pattern rule for integrators
-$(INTEGRATORS) : %.o: %.cc %.h integrator.h guiding_center.h 
+# Static pattern rules
+$(INTEGRATORS) : %.o: %.cc %.h integrator.h guiding_center.h em_fields.h
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
+
+$(MODELS) : %.o: %.cc %.h em_fields.h
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(FIELDS) : %.o: %.cc %.h em_fields.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
 clean:
