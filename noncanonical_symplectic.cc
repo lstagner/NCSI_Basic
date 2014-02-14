@@ -77,8 +77,7 @@ int NoncanonicalSymplectic::Step(double &t, Eigen::VectorXd &x){
   // Finally, check theta coordinate for exceeding 2pi rad
   // Assumes coordinates are cylindrical! 
   double pi=3.141592653589793;
-  double r0 = em_fields_->kR0();
-  if(abs(x[1]) > 2*pi*r0){
+  if(abs(x[1]) > 2*pi){
     int sign;
     if(x[1]>0){
       sign=1;
@@ -86,8 +85,8 @@ int NoncanonicalSymplectic::Step(double &t, Eigen::VectorXd &x){
     else{
       sign=-1;
     }
-    x[1] -= sign*2*pi*r0;
-    x_history_(1,1) -= sign*2*pi*r0;
+    x[1] -= sign*2*pi;
+    x_history_(1,1) -= sign*2*pi;
   }
 
   return 0;

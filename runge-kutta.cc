@@ -107,5 +107,19 @@ int RungeKutta::Step(double &t, Eigen::VectorXd &x) {
   // Update t
   t = t + kdt_;
 
+  // Finally, check theta coordinate for exceeding 2pi rad
+  // Assumes coordinates are cylindrical! 
+  double pi=3.141592653589793;
+  if(abs(x[1]) > 2*pi){
+    int sign;
+    if(x[1]>0){
+      sign=1;
+    }
+    else{
+      sign=-1;
+    }
+    x[1] -= sign*2*pi;
+  }
+
   return 0;
 }
