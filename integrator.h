@@ -13,7 +13,7 @@
 #define INTEGRATOR_H_
 
 #include "guiding_center.h" // ODE system being modeled
-#include <Eigen/Dense> // Provides linear algebra capabilities
+#include "Eigen/Dense" // Provides linear algebra capabilities
 
 class Integrator {
  public:
