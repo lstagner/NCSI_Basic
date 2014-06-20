@@ -4,7 +4,7 @@ FIELDS = axisymmetric_tokamak.o
 
 DRIVER_DEPENDS = input_parser.o $(INTEGRATORS) $(MODELS) $(FIELDS)
 
-CXXFLAGS = -g -Wall -Wextra -std=c++0x
+CXXFLAGS = -g -Wall -Wextra -std=c++0x 
 BOOSTFLAGS = -L$(BOOST_LIBRARY_DIR) -lboost_program_options
 
 all: driver
