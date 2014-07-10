@@ -11,7 +11,7 @@
 #ifndef EM_FIELDS_H_
 #define EM_FIELDS_H_
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 class EMFields{
  public:

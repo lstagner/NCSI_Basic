@@ -13,7 +13,7 @@
 #define RUNGEKUTTA_H_
 
 #include "integrator.h"  // Abstract base class
-#include "Eigen/Dense"  // Linear algebra operations 
+#include <Eigen/Dense>  // Linear algebra operations 
 #include "guiding_center.h"  // ODE being modeled
 #include <iostream>  // Outputting messages
 

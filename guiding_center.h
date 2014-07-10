@@ -15,7 +15,7 @@
 #ifndef GUIDING_CENTER_H_
 #define GUIDING_CENTER_H_
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "em_fields.h"  // Defines electric/magnetic fields
 
 // Guiding Center System

@@ -11,7 +11,7 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include <ctime> // For timing runtime
 #include "input_parser.h"
 #include "guiding_center.h"

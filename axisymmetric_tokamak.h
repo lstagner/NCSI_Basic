@@ -13,7 +13,7 @@
 #define AXISYMMETRIC_TOKAMAK_H_
 
 #include "em_fields.h"
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 class AxisymmetricTokamak : public EMFields{
  public:

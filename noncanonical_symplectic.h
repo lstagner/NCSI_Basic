@@ -16,7 +16,7 @@
 #include "em_fields.h"
 #include "integrator.h"
 #include <iostream> 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "runge-kutta.h" // Used in InitialStep
 
 class NoncanonicalSymplectic : public Integrator{
