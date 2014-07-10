@@ -13,7 +13,7 @@ driver : driver.o $(DRIVER_DEPENDS)
 	$(CXX) $(CXXFLAGS) -o $@  $< $(DRIVER_DEPENDS) $(BOOSTFLAGS)
 
 driver.o : driver.cc input_parser.h guiding_center.h
-	$(CXX) $(CXXFLAGS) -I $(MODELDIR) -I $(INTEGRATORDIR) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 input_parser.o : input_parser.cc input_parser.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
