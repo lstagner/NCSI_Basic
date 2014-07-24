@@ -4,6 +4,12 @@ FIELDS = axisymmetric_tokamak.o
 
 DRIVER_DEPENDS = input_parser.o $(INTEGRATORS) $(MODELS) $(FIELDS)
 
+# CUDA_DRIVER: Compile objects using NVCC instead g++
+CUDA_INTEGRATORS = $(INTEGRATORS:.o=_cu.o) 
+CUDA_MODELS = $(MODELS:.o=_cu.o)
+CUDA_FIELDS = $(FIELDS:.o=_cu.o)
+CUDA_DRIVER_DEPENDS = input_parser.o $(CUDA_INTEGRATORS) $(CUDA_MODELS) $(CUDA_FIELDS)
+
 #CXXFLAGS = -g -Wall -Wextra -std=c++0x 
 CXXFLAGS = -O3
 # Check whether we're on the K20 node which uses sm_35
@@ -14,12 +20,13 @@ NVCC_FLAGS=-rdc=true -arch=sm_20 -O3 #-g -G
 endif
 BOOST_FLAGS=-L$(BOOST_LIBRARY_DIR) -lboost_program_options
 
-all: driver
+all: driver # cuda_driver
 
-# driver : driver.o $(DRIVER_DEPENDS)
-# 	nvcc $(NVCC_FLAGS) -o $@ $^ $(BOOST_FLAGS)
 driver : driver.o $(DRIVER_DEPENDS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(BOOST_FLAGS)
+
+cuda_driver : cuda_driver_cu.o $(CUDA_DRIVER_DEPENDS)
+	nvcc $(NVCC_FLAGS) -o $@ $^ $(BOOST_FLAGS)
 
 input_parser.o : input_parser.cc input_parser.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -34,8 +41,9 @@ $(MODELS) : %.o: %.cc %.h em_fields.h
 $(FIELDS) : %.o: %.cc %.h em_fields.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
-# %.o : %.cu
-# 	nvcc $(NVCC_FLAGS) -c -o $@ $^
+# Rule for making _cu.o objects
+%_cu.o : %.cc
+	nvcc $(NVCC_FLAGS) -c -o $@ $^
 
 
 clean:
