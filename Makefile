@@ -20,16 +20,20 @@ NVCC_FLAGS=-rdc=true -arch=sm_20 -O3 #-g -G
 endif
 BOOST_FLAGS=-L$(BOOST_LIBRARY_DIR) -lboost_program_options
 
-all: driver # cuda_driver
+all: driver cuda_driver
 
 driver : driver.o $(DRIVER_DEPENDS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(BOOST_FLAGS)
 
-cuda_driver : cuda_driver_cu.o $(CUDA_DRIVER_DEPENDS)
+cuda_driver : cuda_driver.o $(CUDA_DRIVER_DEPENDS)
 	nvcc $(NVCC_FLAGS) -o $@ $^ $(BOOST_FLAGS)
 
+cuda_driver.o : cuda_driver.cu
+	nvcc $(NVCC_FLAGS) -c -o $@ $<
+
+# DONT use -O3 here. Breaks the linking for some reason.
 input_parser.o : input_parser.cc input_parser.h
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) -c -o $@ $<
 
 # Static pattern rules
 $(INTEGRATORS) : %.o: %.cc %.h integrator.h guiding_center.h em_fields.h
