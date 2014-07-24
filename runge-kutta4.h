@@ -21,7 +21,8 @@
 
 class RungeKutta4 : public Integrator {
  public:
-  CUDA_MEMBER RungeKutta4(const double kdt, const Model &model);
+  CUDA_MEMBER RungeKutta4(const double kdt, 
+			  const GuidingCenter &kGuidingCenter);
   CUDA_MEMBER ~RungeKutta4();
   // Map from (t_k, x_k) -> (t_{k+1}, x_{k+1})
   CUDA_MEMBER int Step(double &t, Vector4 &x);  

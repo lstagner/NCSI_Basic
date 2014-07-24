@@ -22,8 +22,9 @@
   * @param[in] kOrder Order of Runge-Kutta method. 2 and 4 are implemented.
   * 
   */
-RungeKutta4::RungeKutta4(const double kdt, const Model &model) : 
-  Integrator(kdt, model), kOrder_(4) {
+RungeKutta4::RungeKutta4(const double kdt, 
+			 const GuidingCenter &kGuidingCenter) : 
+  Integrator(kdt, kGuidingCenter), kOrder_(4) {
  
   //// Setting of the various coefficients
   a_(1,0) = 0.5;
