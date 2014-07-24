@@ -66,7 +66,8 @@ int NoncanonicalSymplectic::Step(double &t, Eigen::VectorXd &x){
 	  (n_iterations < kMaxIterations_)){
       n_iterations++; // Increment how many times we've done this
       Jacobian(t, x, jacobian);  // Fetch new Jacobian
-      x -= jacobian.inverse()*error; // Adjust x
+      // Adjust x^n+1 = x^n - J^{-1}*error
+      x -= jacobian.inverse()*error;
       UpdateRule(t, x, error); // Check new error
     }
     if (n_iterations == kMaxIterations_){
