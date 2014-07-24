@@ -1,0 +1,155 @@
+#!/bin/bash
+#
+# --- this is a sample script for running a program on the PPPL
+#     cluster. You modify this script for your needs, then use the
+#     'qsub' command to submit it to the cluster's job scheduler.
+#
+#     The job scheduler is the MOAB scheduler, based on "maui" 
+#     and "torque". It uses "PBS" directives in this file to determine 
+#     where to run the job, how many hosts to run it upon, where to 
+#     put output files, etc.
+#
+# remarks: a line beginning with # is a comment
+#          a line beginning with #PBS is a batch directive
+#          assume (upper/lower) case to be sensitive
+#
+# ------------------------------------------------------------
+# Basic Information
+#
+# --- the name of your job
+#PBS -N code_solver_u
+ 
+# --- Mail options
+#     mail on execution("b"), termination ("e"), or interruption ("a")
+# #PBS -m aeb
+ 
+# --- Set the mail receivers
+# #PBS -M lellison@pppl.gov
+ 
+# ------------------------------------------------------------
+# Job execution details
+ 
+# --- run the job on 'n' nodes with 'y' processors per node (ppn)
+# ------- Use gpusrv01 for 2 M2070 cards and gpusrv02 for 2 K20m cards
+# -----------------          448 cores ea.                  2496 cores ea
+#PBS -l nodes=1:ppn=1
+
+# --- specify the memory required for a job (in mb)
+#PBS -l mem=1000mb
+
+# --- specify the period of time the job will run in the format
+#     hh:mm:ss (ex. 72 hours is 72:00:00)
+#PBS -l walltime=00:02:00
+
+# --- (optional) submit this job to a special queue. Typically, you 
+#     do not specify a special queue, as the job scheduler will find 
+#     the appropriate systems for you, given the job details noted 
+#     above.
+#PBS -q gque
+
+# --- do not rerun this job if it fails
+#PBS -r n
+
+# ------------------------------------------------------------
+# When a batch job starts execution, a number of environment
+# variables are predefined, which include:
+#
+#      Variables defined on the execution host.
+#      Variables exported from the submission host with
+#                -v (selected variables) and -V (all variables).
+#      Variables defined by the batch system.
+#
+# The following reflect the environment where the user ran qsub:
+# PBS_O_HOST    The host where you ran the qsub command.
+# PBS_O_LOGNAME Your user ID where you ran qsub.
+# PBS_O_HOME    Your home directory where you ran qsub.
+# PBS_O_WORKDIR The working directory where you ran qsub.
+#
+# These reflect the environment where the job is executing:
+# PBS_ENVIRONMENT is set to "PBS_BATCH" if the job is a batch job, or
+#                 to "PBS_INTERACTIVE" if the job is an interactive job.
+# PBS_O_QUEUE   The original queue you submitted to.
+# PBS_QUEUE     The queue the job is executing from.
+# PBS_JOBID     The job's PBS identifier.
+# PBS_JOBNAME   The job's name.
+
+# export all my environment variables to the job
+#PBS -V
+
+# --- define standard output and error files for the job
+#     default is <jobname>.o<jobid> and <jobname>.e<jobid>
+#PBS -o code_solver_u.out
+#PBS -e code_solver_u.err
+# --- or combine both output and error streams into one file with the
+#     job name and id as the default file name
+#PBS -j oe
+
+# ------------------------------------------------------------
+# Log interesting information
+#
+# echo " "
+# echo "-------------------"
+# echo "This is a $PBS_ENVIRONMENT job"
+# echo "This job was submitted to the queue: $PBS_QUEUE"
+# echo "The job's id is: $PBS_JOBID"
+# echo "-------------------"
+# echo "The master node of this job is: $PBS_O_HOST"
+
+# --- the nodes allocated to this job are listed in the
+#     file PBS_NODEFILE
+
+# --- count the number of processors allocated to this run 
+# --- $NPROCS is required by mpirun.
+NPROCS=`wc -l < $PBS_NODEFILE`
+
+NNODES=`uniq $PBS_NODEFILE | wc -l`
+
+# echo "This job is using $NPROCS CPU(s) on the following $NNODES node(s):"
+# echo "-----------------------"
+# uniq $PBS_NODEFILE | sort
+# echo "-----------------------"
+
+# ------------------------------------------------------------
+# Setup execution variables
+
+
+# --- PBS_O_WORKDIR is the current working directory from
+#     which this job was submitted using 'qsub'
+# echo The working directory is $PBS_O_WORKDIR 
+#
+# --- the path of your executable
+EXEPATH="./code_solver_u"
+ 
+# --- declare any program arguments
+ARGS=""
+ 
+# --- echo the command syntax
+# echo "The command syntax for this job is:"
+# echo $EXEPATH $ARGS
+# echo " "
+
+# --- Determine the hardware used
+# echo "The GPU hardware for this job is:"
+# nvidia-smi
+# echo " "
+ 
+# ------------------------------------------------------------
+# Run the program
+#
+# --- 'cd' to the current working directory (by default, qsub
+#     starts from the home directory of the user).
+#     this is useful if you have input files in the working
+#     directory.
+cd $PBS_O_WORKDIR
+ 
+# --- print out the current time, run the command,
+#     then print out the ending time
+#
+echo -n 'Started job at : ' ; date
+ 
+$EXEPATH $ARGS
+ 
+echo -n 'Ended job at  : ' ; date
+echo " " 
+exit
+
