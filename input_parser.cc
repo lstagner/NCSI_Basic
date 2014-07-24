@@ -2,7 +2,7 @@
 *******************************************************************************
 * \file input_parser.cc
 *
-* \brief Implementation of InputParser class. Sets runtime options.
+* \brief Implementation for InputParser class.
 *
 * \date Jan 2014
 * \author C. Leland Ellison
@@ -25,6 +25,8 @@ int InputParser::ReadInput(int argc, char** argv){
   // Manditory Options - Failure if not specified
   po::options_description manditory_options("Manditory Options");
   manditory_options.add_options()
+    ("model,M", po::value<std::string>()->required(), 
+     "Model describing ODE system")
     ("integrator,I", po::value<std::string>()->required(), 
      "Integration method")
     ("dt,h", po::value<double>()->required(), "Numerical step size dt")
@@ -37,21 +39,19 @@ int InputParser::ReadInput(int argc, char** argv){
     ("help", "Produce help message")
   ;
 
-  // Declare model options
-  po::options_description model_options("Model Options");
-  model_options.add_options()
-    ("mu", po::value<double>()->default_value(0.21), "mu parameter")
-    ("b0", po::value<double>()->default_value(1.0), "magnetic field strength")
-    ("r0", po::value<double>()->default_value(100.0), "radius scale")
-  ;
-
-  // Declare integrator options
-  po::options_description integrator_options("Integrator Options");
-  integrator_options.add_options()
-    ("tol", po::value<double>()->default_value(1e-12), 
-     "Nonlinear solve tolerance")
-    ("max_iter", po::value<int>()->default_value(15),
-     "Maximum nonlinear solve iterations")
+  // Declare hidden options - Not manditory, but helpful on command line
+  po::options_description hidden_options("Hidden Options");
+  hidden_options.add_options()
+    ("input_file", po::value<std::string>(), "Input file defining run options")
+    ("save_nth", po::value<int>()->default_value(1),
+     "Save every save_nth step")
+    ("initial_conditions, x0", po::value<std::vector<double> >()
+     ->multitoken()->default_value(std::vector<double>(),""),
+     "Initial conditions")
+    ("n_particles,R", po::value<int>()->default_value(1), 
+     "Repeat this many particles")
+    ("block_size,B", po::value<int>()->default_value(32),
+     "Size of GPU block")
   ;
 
   // Declare output options
@@ -63,16 +63,41 @@ int InputParser::ReadInput(int argc, char** argv){
      "Number of printed digits")
   ;
 
-  // Declare hidden options - Not manditory, but helpful on command line
-  po::options_description hidden_options("Hidden Options");
-  hidden_options.add_options()
-    ("input_file", po::value<std::string>(), "Input file defining run options")
-    ("save_nth", po::value<int>()->default_value(1),
-     "Save every save_nth step")
-    ("initial_conditions,x", po::value<std::vector<double> >()
-     ->multitoken()->default_value(std::vector<double>(),""),
-     "Initial conditions")
+  // Declare model options
+  po::options_description model_options("Model Options");
+  model_options.add_options()
+    ("delta", po::value<double>()->default_value(0.0),"delta parameter")
+    ("gamma", po::value<double>()->default_value(0.0), "gamma parameter")
+    ("omega", po::value<double>()->default_value(0.0), "omega parameter")
+    ("sigma", po::value<double>()->default_value(0.0), "sigma parameter")
+    ("rho", po::value<double>()->default_value(0.0), "rho parameter")
+    ("beta", po::value<double>()->default_value(0.0), "beta parameter")
+    ("epsilon", po::value<double>()->default_value(0.0), "epsilon parameter")
+    ("mode_m", po::value<double>()->default_value(0.0), "mode number m")
+    ("mode_n", po::value<double>()->default_value(0.0), "mode number n")
+    ("alpha", po::value<double>()->default_value(0.0), "alpha parameter")
+    ("mode_m1", po::value<double>()->default_value(0.0), "mode number m1")
+    ("mode_m2", po::value<double>()->default_value(0.0), "mode number m2")
+    ("mode_n1", po::value<double>()->default_value(0.0), "mode number n1")
+    ("mode_n2", po::value<double>()->default_value(0.0), "mode number n2")
+    ("mu", po::value<double>()->default_value(0.0), "mu parameter")
+    ("fields", po::value<std::string>()->default_value("straight_bz"), 
+     "electromagnetic field identifier")
+    ("b0", po::value<double>()->default_value(0.0), "magnetic field strength")
+    ("r0", po::value<double>()->default_value(0.0), "radius scale")
   ;
+
+  // Integrator options
+  po::options_description integrator_options("Integrator Options");
+  integrator_options.add_options()
+    ("b", po::value<std::vector<double> >() ->multitoken()->
+     default_value(std::vector<double>(),""), "b coefficients")
+    ("c", po::value<std::vector<double> >() ->multitoken()->
+     default_value(std::vector<double>(),""), "c coefficients")
+    ("d", po::value<std::vector<double> >() ->multitoken()->
+     default_value(std::vector<double>(),""), "d coefficients")
+  ;
+  
 
   // Declare all options
   po::options_description all_options("All Options");
@@ -93,13 +118,11 @@ int InputParser::ReadInput(int argc, char** argv){
   if (variables_map_.count("help")){
     std::cout << descriptive_options << std::endl
 	      << manditory_options << std::endl
-              << model_options << std::endl
-	      << integrator_options << std::endl
 	      << output_options << std::endl
 	      << "USAGE:" << std::endl
-   	      << "driver -I <integrator> -h <double> -N <int>"
+   	      << "code_solver -M <model> -I <integrator> -h <double> -N <int>"
    	      << std::endl << "-OR-" << std::endl 
-   	      << "driver <input_file>" << std::endl << std::endl; 
+   	      << "code_solver <input_file>" << std::endl; 
     return 1;
   }  
 

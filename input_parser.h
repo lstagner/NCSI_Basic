@@ -16,7 +16,6 @@
 
 #include <stdlib.h>
 #include <fstream>
-#include <iostream>
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
@@ -27,8 +26,19 @@ class InputParser{
   //// Accessors
   //! Retrieve the value at key and output it to value_out 
   template <typename T>
-  int GetValue(const char* key, T &value_out) const{
-    value_out = variables_map_[key].as<T>();
+  T GetValue(const char* key) const{
+    return variables_map_[key].as<T>();
+  }
+  //! Check whether key was set using the default value
+  bool Defaulted(const char* key) const { 
+    return variables_map_[key].defaulted();} // Check key is known first?
+  //// Setter
+  //! Add new option given a key and its value
+  template <typename T>
+  int AddOption(const char* key, const T &value_in, 
+		  const bool defaulted=false){
+    variables_map_.insert(std::make_pair(key,po::variable_value(value_in,
+								defaulted)));
     return 0;
   }
 
