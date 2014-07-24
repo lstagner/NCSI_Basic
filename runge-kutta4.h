@@ -16,25 +16,24 @@
 #include "integrator.h"
 #include <Eigen/Dense>
 #include "guiding_center.h"
-#include "cuda_member.h"
 #include "eigen_types.h"
 
 class RungeKutta4 : public Integrator {
  public:
-  CUDA_MEMBER RungeKutta4(const double kdt, 
+  RungeKutta4(const double kdt, 
 			  const GuidingCenter &kGuidingCenter);
-  CUDA_MEMBER ~RungeKutta4();
+  ~RungeKutta4();
   // Map from (t_k, x_k) -> (t_{k+1}, x_{k+1})
-  CUDA_MEMBER int Step(double &t, Vector4 &x);  
+  int Step(double &t, Vector4 &x);  
   //// Accessors
   //! Return name of integrator: runge-kutta4
-  HOST_MEMBER std::string IntegratorName() const { return "runge-kutta4";  }
+  std::string IntegratorName() const { return "runge-kutta4";  }
   //! Access a_ coefficients matrix
-  HOST_MEMBER Matrix4 a_coefficients() const { return a_; }
+  Matrix4 a_coefficients() const { return a_; }
   //! Access b_ coefficients vector
-  HOST_MEMBER Vector4 b_coefficients() const { return b_; }
+  Vector4 b_coefficients() const { return b_; }
   //! Access c_ coefficients vector
-  HOST_MEMBER Vector4 c_coefficients() const { return c_; }
+  Vector4 c_coefficients() const { return c_; }
  private:
   Matrix4 a_;  //!< Specifies for a_ij coefficients of the RK method
   Vector4 b_;  //!< Specifies b_i coefficients of the RK method
