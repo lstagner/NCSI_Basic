@@ -1,0 +1,20 @@
+Incorporating CUDA into NCSI_Basic
+==================================
+Goal: Allow compiling for c++ or for CUDA. Should just be different make commands.
+
+Steps:
+1) Replace all dynamic-sized Eigen vectors with fixed 
+2) Insert CUDA_MEMBER decorators as appropriate
+3) Implement kernel in driver
+4) Implement additional options (Repeat, block size, etc.)
+
+Testing:
+Original Version: 2 steps with RK4
+0.000000     105.00000000       0.00000000       0.00000000       0.12900000
+30.000000     104.99729004       0.03680916       0.20032016       0.12895945
+60.000000     104.98916855       0.07359707       0.40040437       0.12883783
+
+Original Version: 2 steps with NCSI
+0.000000     105.00000000       0.00000000       0.00000000       0.12900000
+30.000000     104.99729004       0.03680916       0.20032016       0.12895945
+60.000000     104.98917142       0.07358952       0.40035070       0.12887834
