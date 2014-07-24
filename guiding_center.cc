@@ -18,7 +18,7 @@
  * @param[in] kMu Magnetic moment in [cm^2/10^-8 s] 
  */
 GuidingCenter::GuidingCenter(EMFields *em_fields, const double kMu) 
-  : em_fields_(em_fields), kMu_(kMu){}
+  : kDimen_(4), em_fields_(em_fields), kMu_(kMu){}
 
 
 /*!  

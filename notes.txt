@@ -4,7 +4,7 @@ Goal: Allow compiling for c++ or for CUDA. Should just be different make command
 
 Steps:
 1) Replace all dynamic-sized Eigen vectors with fixed DONE
-2) Insert CUDA_MEMBER decorators as appropriate
+2) Insert CUDA_MEMBER decorators as appropriate DONE
 3) Implement kernel in driver
 4) Implement additional options (Repeat, block size, etc.)
 

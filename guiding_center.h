@@ -17,24 +17,25 @@
 
 #include <Eigen/Dense>
 #include "em_fields.h"  // Defines electric/magnetic fields
-#include "eigen_types.h"
+#include "eigen_types.h" // Defines typedef Vector4, ...
+#include "cuda_member.h"
 
 // Guiding Center System
 class GuidingCenter {
  public:
-  GuidingCenter(EMFields *em_fields, const double kMu);
+  CUDA_MEMBER GuidingCenter(EMFields *em_fields, const double kMu);
   //! Evaluates vector field of ODE. f in dot{x} = f(x)
-  int VectorField(const double kt, const Vector4 &kx, 
+  CUDA_MEMBER int VectorField(const double kt, const Vector4 &kx, 
 		  Vector4 &fx) const;
 
   // Accessors
   //! Return pointer to em_fields instance
-  EMFields *em_fields() const { return em_fields_; }
-  int kDimen() const {return kDimen_; }  //!< Return dimension of ODE system
-  double kMu() const {return kMu_;}  //!< Return value of mu
+  CUDA_MEMBER EMFields *em_fields() const { return em_fields_; }
+  CUDA_MEMBER int kDimen() const {return kDimen_; }  //!< Return dim of ODE
+  CUDA_MEMBER double kMu() const {return kMu_;}  //!< Return value of mu
   
  private:
-  static const int kDimen_ = 4;  //!< Dimension of ODE system
+  const int kDimen_;  //!< Dimension of ODE system
   EMFields *em_fields_;  //!< Pointer to class defining electromagnetic fields
   const double kMu_;  //!< Magnetic moment
 };
