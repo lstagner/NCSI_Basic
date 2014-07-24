@@ -22,6 +22,8 @@
 #include "noncanonical_symplectic.h"
 #include "eigen_types.h"
 
+#define GC_DIM 4 // Dimension of guiding center system
+
 /*!
  * \brief Prints a line to standard out giving [time x[0] x[1] ....]
  *
@@ -36,28 +38,6 @@ void PrintState(double t, const Vector4 &x, int n_digits){
   std::cout.setf( std::ios::fixed, std:: ios::floatfield );
   std::cout << t << "     " << x.format(OneLineNDeep) << std::endl;
 }
-
-// Kernel for time advance
-// template <class M, class I>
-// __global__ void step_positions(Vector4 &x, double t, const double kdt, // 
-// 			       const int kNSteps, const int kNParticles){
-//   // Thread identification
-//   int idx=blockIdx.x*blockDim.x + threadIdx.x;
-
-//   // Integrator initialization
-//   AxisymmetricTokamak em_fields(1.0, 100.0);
-//   GuidingCenter model((EMFields *) &em_fields, 0.21);
-//   RungeKutta4 integrator(kdt, *(Model *) &model);
-
-//   // Time advance
-//   for(int i=0; i<kNSteps; ++i){
-//     if (idx < kNParticles){
-//       integrator.Step(t, &x[idx*(model.kDimen())]);
-//     }
-//     __syncthreads(); // Likely not necessary, but doesn't slow down
-//   }
-// }
-
 
 /*!
  * \brief Body of the driver. Use program options to specify ode, integrator, dt, and n_steps.
@@ -93,14 +73,14 @@ int main(int argc, char *argv[]) {
   input_parser.GetValue("max_iter", max_iterations);
 
   //// Initialize model and integrator
-  EMFields *em_fields = new AxisymmetricTokamak(b0, r0);
-  GuidingCenter *guiding_center = new GuidingCenter(em_fields, mu);
+  AxisymmetricTokamak em_fields(b0, r0);
+  GuidingCenter guiding_center((EMFields *) &em_fields, mu);
   Integrator *integrator;
   if (integrator_name.compare("rk4")==0){
-    integrator = new RungeKutta4(dt, *guiding_center);
+    integrator = new RungeKutta4(dt, guiding_center);
   }
   else if (integrator_name.compare("ncsi")==0){
-    integrator = new NoncanonicalSymplectic(dt, *guiding_center, 
+    integrator = new NoncanonicalSymplectic(dt, guiding_center, 
 					    newton_tolerance, max_iterations);
   }
   else{
@@ -116,7 +96,7 @@ int main(int argc, char *argv[]) {
   
   // If no initial conditions specified or they are of the wrong dimension
   if((!initial_conditions.size()) || 
-     (initial_conditions.size() % (guiding_center->kDimen()) )){
+     (initial_conditions.size() % (GC_DIM) )){
     // Use the default initial conditions: Vector of ones
     n_initial_conditions = 1;
     for (int i = 0; i < x.size(); ++i) {
@@ -125,7 +105,7 @@ int main(int argc, char *argv[]) {
   }
   else{
    // Otherwise, we have more than one initial condition to simulate
-   n_initial_conditions = initial_conditions.size()/guiding_center->kDimen();
+   n_initial_conditions = initial_conditions.size()/GC_DIM;
   }
 
   //// Record time?
@@ -139,8 +119,8 @@ int main(int argc, char *argv[]) {
     integrator->Reset(); // Resets temporary variables in integrators
     double t = 0;
     // Set initial condition
-    for (int i=0; i<guiding_center->kDimen(); ++i){
-      x[i] = initial_conditions[j*guiding_center->kDimen() + i];
+    for (int i=0; i<GC_DIM; ++i){
+      x[i] = initial_conditions[j*GC_DIM + i];
     }
     PrintState(t, x, print_precision); // Print initial position
     // Run standard stepping
@@ -160,7 +140,5 @@ int main(int argc, char *argv[]) {
 
   //// Clean up
   delete integrator;
-  delete guiding_center;
-  delete em_fields;
   return 0;
 }
