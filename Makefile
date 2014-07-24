@@ -1,5 +1,5 @@
 MODELS = guiding_center.o 
-INTEGRATORS = runge-kutta.o noncanonical_symplectic.o 
+INTEGRATORS = runge-kutta4.o noncanonical_symplectic.o 
 FIELDS = axisymmetric_tokamak.o
 
 DRIVER_DEPENDS = input_parser.o $(INTEGRATORS) $(MODELS) $(FIELDS)

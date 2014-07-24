@@ -18,7 +18,7 @@
 #include "em_fields.h"
 #include "axisymmetric_tokamak.h"
 #include "integrator.h"
-#include "runge-kutta.h"
+#include "runge-kutta4.h"
 #include "noncanonical_symplectic.h"
 #include "eigen_types.h"
 
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
   GuidingCenter *guiding_center = new GuidingCenter(em_fields, mu);
   Integrator *integrator;
   if (integrator_name.compare("rk4")==0){
-    integrator = new RungeKutta(dt, *guiding_center, 4);
+    integrator = new RungeKutta4(dt, *guiding_center);
   }
   else if (integrator_name.compare("ncsi")==0){
     integrator = new NoncanonicalSymplectic(dt, *guiding_center, 

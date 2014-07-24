@@ -14,22 +14,17 @@
 
 #include "em_fields.h"
 #include <Eigen/Dense>
+#include "eigen_types.h"
 
 class AxisymmetricTokamak : public EMFields{
  public:
   AxisymmetricTokamak(const double kB0, const double kR0);
-  void VectorPotentialA(const double kt, const Eigen::VectorXd &kx,
-			Eigen::Vector3d &a) const;
-  void GradA(const double kt, const Eigen::VectorXd &kx, 
-	     Eigen::MatrixXd &grad_a) const;
-  void BHat(const double kt, const Eigen::VectorXd &kx, 
-	    Eigen::Vector3d &b_hat) const;
-  void GradBHat(const double kt, const Eigen::VectorXd &kx, 
-		Eigen::MatrixXd &grad_b_hat) const;
-  void GradPhi(const double kt, const Eigen::VectorXd &kx, 
-	       Eigen::Vector3d &grad_phi) const;
-  void GradModB(const double kt, const Eigen::VectorXd &kx, 
-		Eigen::Vector3d &grad_mod_b) const;
+  void VectorPotentialA(const double kt, const Vector3 &kx, Vector3 &a) const;
+  void GradA(const double kt, const Vector3 &kx, Matrix3 &grad_a) const;
+  void BHat(const double kt, const Vector3 &kx, Vector3 &b_hat) const;
+  void GradBHat(const double kt, const Vector3 &kx, Matrix3 &grad_b_hat) const;
+  void GradPhi(const double kt, const Vector3 &kx, Vector3 &grad_phi) const;
+  void GradModB(const double kt, const Vector3 &kx, Vector3 &grad_mod_b) const;
   double kR0() const { return kR0_;}
   double kB0() const { return kB0_;}
  private:

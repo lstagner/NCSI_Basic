@@ -17,14 +17,15 @@
 
 #include <Eigen/Dense>
 #include "em_fields.h"  // Defines electric/magnetic fields
+#include "eigen_types.h"
 
 // Guiding Center System
 class GuidingCenter {
  public:
   GuidingCenter(EMFields *em_fields, const double kMu);
   //! Evaluates vector field of ODE. f in dot{x} = f(x)
-  int VectorField(const double kt, const Eigen::VectorXd &kx, 
-		  Eigen::VectorXd &fx) const;
+  int VectorField(const double kt, const Vector4 &kx, 
+		  Vector4 &fx) const;
 
   // Accessors
   //! Return pointer to em_fields instance

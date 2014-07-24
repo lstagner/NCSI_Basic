@@ -26,7 +26,7 @@ NoncanonicalSymplectic::NoncanonicalSymplectic(const double kdt,
 					  const double kMaxIterations) 
   : Integrator(kdt, kGuidingCenter), kMu_(kGuidingCenter.kMu()), 
     kNewtonTolerance_(kNewtonTolerance), kMaxIterations_(kMaxIterations),
-    needs_initialization_(true), x_history_(kGuidingCenter.kDimen(), 2){
+    needs_initialization_(true) {
   x_history_.setZero(); // Just to be safe.
   em_fields_ = kGuidingCenter.em_fields();
 }
@@ -41,7 +41,7 @@ NoncanonicalSymplectic::NoncanonicalSymplectic(const double kdt,
  * @param[in,out] x Vector of current coordinates. Will be updated to x(t+h). 
  * @return Integer code which is 0 if successful. 
  */
-int NoncanonicalSymplectic::Step(double &t, Eigen::VectorXd &x){
+int NoncanonicalSymplectic::Step(double &t, Vector4 &x){
   if(needs_initialization_){
 
     StoreHistory(x); // x_history_ --> [0, x0]
@@ -54,9 +54,9 @@ int NoncanonicalSymplectic::Step(double &t, Eigen::VectorXd &x){
     StoreHistory(x); // x_history_ --> [x_k-1, x_k]
    
     // Declare local variables used in nonlinear solve
-    Eigen::VectorXd error(kDimen_);
+    Vector4 error(kDimen_);
     int n_iterations = 0;
-    Eigen::MatrixXd jacobian(kDimen_, kDimen_);
+    Matrix4 jacobian(kDimen_, kDimen_);
 
     NewtonGuess(t, x); // Get estimate of new position. Advances (t,x).
     UpdateRule(t, x, error); // Check how far t,x are from solution
@@ -100,7 +100,7 @@ int NoncanonicalSymplectic::Step(double &t, Eigen::VectorXd &x){
  * @param[in] kx New position to store
  * @returns 0 upon success
  */
-int NoncanonicalSymplectic::StoreHistory(const Eigen::VectorXd &kx){
+int NoncanonicalSymplectic::StoreHistory(const Vector4 &kx){
   // Shift everything back one
   x_history_.col(0) = x_history_.col(1);
   
@@ -117,8 +117,7 @@ int NoncanonicalSymplectic::StoreHistory(const Eigen::VectorXd &kx){
  * @param[in,out] x Position. At in: x(t=t_k) At out: x(t=t_k+1)
  * @returns 0 upon success
  */
-int NoncanonicalSymplectic::InitialStep(double &t, 
-						  Eigen::VectorXd &x) const{
+int NoncanonicalSymplectic::InitialStep(double &t, Vector4 &x) const{
   RungeKutta rk4(kdt_, kGuidingCenter_, 4);
   return rk4.Step(t,x);
 }
@@ -132,9 +131,8 @@ int NoncanonicalSymplectic::InitialStep(double &t,
  * @param[out] error Error vector which is zero for satisfied update rule.
  * @return Zero for success
  */
-int NoncanonicalSymplectic::UpdateRule(const double kt,
-				       const Eigen::VectorXd &kx,
-				       Eigen::VectorXd &error) const
+int NoncanonicalSymplectic::UpdateRule(const double kt, const Vector4 &kx,
+				       Vector4 &error) const
 {
   //// Define intermediate variables
   // Conventions: kp1 --> ``k plus 1"
@@ -143,26 +141,26 @@ int NoncanonicalSymplectic::UpdateRule(const double kt,
   //              kmhalf --> ``k minus 1/2"
   double t_kphalf;
   double t_kmhalf;
-  Eigen::Vector3d x_kphalf;
-  Eigen::Vector3d x_kmhalf;
-  Eigen::Vector3d delta_x_kphalf;
-  Eigen::Vector3d delta_x_kmhalf;
-  Eigen::Vector3d a_kphalf;
-  Eigen::Vector3d a_kmhalf;
-  Eigen::Vector3d b_hat_kphalf;
-  Eigen::Vector3d b_hat_kmhalf;
-  Eigen::MatrixXd grad_a_kphalf(3,3);
-  Eigen::MatrixXd grad_a_kmhalf(3,3);
-  Eigen::MatrixXd grad_b_hat_kphalf(3,3);
-  Eigen::MatrixXd grad_b_hat_kmhalf(3,3);
-  Eigen::Vector3d grad_mod_b_kphalf;
-  Eigen::Vector3d grad_mod_b_kmhalf;
-  Eigen::Vector3d grad_phi_kphalf;
-  Eigen::Vector3d grad_phi_kmhalf;
-  Eigen::MatrixXd grad_a_dag_kphalf(3,3);
-  Eigen::MatrixXd grad_a_dag_kmhalf(3,3);
-  Eigen::Vector3d a_dag_kphalf;
-  Eigen::Vector3d a_dag_kmhalf;
+  Vector3 x_kphalf;
+  Vector3 x_kmhalf;
+  Vector3 delta_x_kphalf;
+  Vector3 delta_x_kmhalf;
+  Vector3 a_kphalf;
+  Vector3 a_kmhalf;
+  Vector3 b_hat_kphalf;
+  Vector3 b_hat_kmhalf;
+  Matrix3 grad_a_kphalf(3,3);
+  Matrix3 grad_a_kmhalf(3,3);
+  Matrix3 grad_b_hat_kphalf(3,3);
+  Matrix3 grad_b_hat_kmhalf(3,3);
+  Vector3 grad_mod_b_kphalf;
+  Vector3 grad_mod_b_kmhalf;
+  Vector3 grad_phi_kphalf;
+  Vector3 grad_phi_kmhalf;
+  Matrix3 grad_a_dag_kphalf(3,3);
+  Matrix3 grad_a_dag_kmhalf(3,3);
+  Vector3 a_dag_kphalf;
+  Vector3 a_dag_kmhalf;
   
   //// Update intermediate variables
   // t coming in is t_kp1. Define t_kphalf, tkmhalf
@@ -225,10 +223,9 @@ int NoncanonicalSymplectic::UpdateRule(const double kt,
  * @param[in,out] x Position to advance to initial guess for solver
  * @return Zero for success
  */
-int NoncanonicalSymplectic::NewtonGuess(double &t, 
-						  Eigen::VectorXd &x) const {
+int NoncanonicalSymplectic::NewtonGuess(double &t, Vector4 &x) const {
   // Stores output of VectorField
-  Eigen::VectorXd fx(kDimen_);
+  Vector4 fx(kDimen_);
 
   // Fetch f(x) in \dot{x} = f(x)
   kGuidingCenter_.VectorField(t,x,fx); 
@@ -246,16 +243,14 @@ int NoncanonicalSymplectic::NewtonGuess(double &t,
  * @param[out] jacobian derivative of the update rule w.r.t the new position
  * @return Integer code which is 0 if successful. 
  */
-int NoncanonicalSymplectic::Jacobian(const double kt, 
-					       const Eigen::VectorXd &kx, 
-					       Eigen::MatrixXd &jacobian) 
-  const{
+int NoncanonicalSymplectic::Jacobian(const double kt, const Vector4 &kx, 
+				     Matrix4 &jacobian) const{
 
   double delta = 1e-5; // Step size for finite difference
 
-  Eigen::VectorXd left_evaluation(kDimen_);
-  Eigen::VectorXd right_evaluation(kDimen_);
-  Eigen::MatrixXd eye = Eigen::MatrixXd::Identity(kDimen_, kDimen_);
+  Vector4 left_evaluation(kDimen_);
+  Vector4 right_evaluation(kDimen_);
+  Matrix4 eye = Matrix4::Identity();
 
   // jacobian needs to be kDimen by kDimen!
   for (int i=0; i<kDimen_; ++i){

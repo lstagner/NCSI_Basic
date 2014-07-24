@@ -14,6 +14,7 @@
 
 #include "guiding_center.h" // ODE system being modeled
 #include <Eigen/Dense> // Provides linear algebra capabilities
+#include "eigen_types.h" // Defines Vector3, Matrix3, ...
 
 class Integrator {
  public:
@@ -27,7 +28,7 @@ class Integrator {
 	kDimen_(kGuidingCenter.kDimen()) {}
   virtual ~Integrator() {}
   //! Time-advance map from (t_k, x_k) -> (t_{k+1}, x_{k+1}).  
-  virtual int Step(double &t, Eigen::VectorXd &x) = 0;
+  virtual int Step(double &t, Vector4 &x) = 0;
   //! Method used in multistep integrators
   virtual void Reset(){}; 
  protected:
