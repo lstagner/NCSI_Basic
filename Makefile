@@ -16,8 +16,10 @@ BOOST_FLAGS=-L$(BOOST_LIBRARY_DIR) -lboost_program_options
 
 all: driver
 
+# driver : driver.o $(DRIVER_DEPENDS)
+# 	nvcc $(NVCC_FLAGS) -o $@ $^ $(BOOST_FLAGS)
 driver : driver.o $(DRIVER_DEPENDS)
-	nvcc $(NVCC_FLAGS) -o $@ $^ $(BOOST_FLAGS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(BOOST_FLAGS)
 
 input_parser.o : input_parser.cc input_parser.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -32,8 +34,8 @@ $(MODELS) : %.o: %.cc %.h em_fields.h
 $(FIELDS) : %.o: %.cc %.h em_fields.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
-%.o : %.cu
-	nvcc $(NVCC_FLAGS) -c -o $@ $^
+# %.o : %.cu
+# 	nvcc $(NVCC_FLAGS) -c -o $@ $^
 
 
 clean:
