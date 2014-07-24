@@ -78,7 +78,7 @@ int NoncanonicalSymplectic::Step(double &t, Vector4 &x){
   // Finally, check theta coordinate for exceeding 2pi rad
   // Assumes coordinates are cylindrical! 
   double pi=3.141592653589793;
-  if(abs(x[1]) > 2*pi){
+  if(std::abs(x[1]) > 2*pi){
     int sign;
     if(x[1]>0){
       sign=1;
