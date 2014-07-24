@@ -20,6 +20,7 @@
 #include "integrator.h"
 #include "runge-kutta.h"
 #include "noncanonical_symplectic.h"
+#include "eigen_types.h"
 
 /*!
  * \brief Prints a line to standard out giving [time x[0] x[1] ....]
@@ -28,13 +29,35 @@
  * @param[in] x Position vector
  * @param[in] n_digits Number of digits to display in output
  */
-void PrintState(double t, const Eigen::VectorXd &x, int n_digits){
+void PrintState(double t, const Vector4 &x, int n_digits){
   // Formatting options: n_digits precision, all vector elements on one line
   static Eigen::IOFormat OneLineNDeep(n_digits, 0, "     ", "     ",
 				      "", "", "", "");
   std::cout.setf( std::ios::fixed, std:: ios::floatfield );
   std::cout << t << "     " << x.format(OneLineNDeep) << std::endl;
 }
+
+// Kernel for time advance
+// template <class M, class I>
+// __global__ void step_positions(Vector4 &x, double t, const double kdt, // 
+// 			       const int kNSteps, const int kNParticles){
+//   // Thread identification
+//   int idx=blockIdx.x*blockDim.x + threadIdx.x;
+
+//   // Integrator initialization
+//   AxisymmetricTokamak em_fields(1.0, 100.0);
+//   GuidingCenter model((EMFields *) &em_fields, 0.21);
+//   RungeKutta4 integrator(kdt, *(Model *) &model);
+
+//   // Time advance
+//   for(int i=0; i<kNSteps; ++i){
+//     if (idx < kNParticles){
+//       integrator.Step(t, &x[idx*(model.kDimen())]);
+//     }
+//     __syncthreads(); // Likely not necessary, but doesn't slow down
+//   }
+// }
+
 
 /*!
  * \brief Body of the driver. Use program options to specify ode, integrator, dt, and n_steps.
@@ -88,7 +111,7 @@ int main(int argc, char *argv[]) {
 
   //// Initial conditions
   // Make a vector matching the size of the ode system
-  Eigen::VectorXd x(guiding_center->kDimen()); 
+  Vector4 x; 
   int n_initial_conditions;
   
   // If no initial conditions specified or they are of the wrong dimension
