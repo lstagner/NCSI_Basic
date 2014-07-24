@@ -118,7 +118,7 @@ int NoncanonicalSymplectic::StoreHistory(const Vector4 &kx){
  * @returns 0 upon success
  */
 int NoncanonicalSymplectic::InitialStep(double &t, Vector4 &x) const{
-  RungeKutta rk4(kdt_, kGuidingCenter_, 4);
+  RungeKutta4 rk4(kdt_, kGuidingCenter_);
   return rk4.Step(t,x);
 }
 
