@@ -46,7 +46,7 @@ $(FIELDS) : %.o: %.cc %.h em_fields.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
 # Rule for making _cu.o objects
-%_cu.o : %.cc
+%_cu.o : %.cu
 	nvcc $(NVCC_FLAGS) -c -o $@ $^
 
 
