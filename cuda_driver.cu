@@ -40,25 +40,25 @@ void PrintState(double t, const Vector4 &x, int n_digits){
 }
 
 // Kernel for time advance
-template <class I>
-__global__ void step_positions(double *x, double t, const double kdt, // 
-			       const int kNSteps, const int kNParticles){
-  // Thread identification
-  int idx=blockIdx.x*blockDim.x + threadIdx.x;
+// template <class I>
+// __global__ void step_positions(double *x, double t, const double kdt, // 
+// 			       const int kNSteps, const int kNParticles){
+//   // Thread identification
+//   int idx=blockIdx.x*blockDim.x + threadIdx.x;
 
-  // Integrator initialization
-  AxisymmetricTokamak em_fields(1.0, 100.0);
-  GuidingCenter model((EMFields *) &em_fields, 0.21);
-  I integrator(kdt, *(Model *) &model);
+//   // Integrator initialization
+//   AxisymmetricTokamak em_fields(1.0, 100.0);
+//   GuidingCenter model((EMFields *) &em_fields, 0.21);
+//   I integrator(kdt, *(Model *) &model);
 
-  // Time advance
-  for(int i=0; i<kNSteps; ++i){
-    if (idx < kNParticles){
-      integrator.Step(t, &x[idx*(model.kDimen())]);
-    }
-    __syncthreads(); // Likely not necessary, but doesn't slow down
-  }
-}
+//   // Time advance
+//   for(int i=0; i<kNSteps; ++i){
+//     if (idx < kNParticles){
+//       integrator.Step(t, &x[idx*(model.kDimen())]);
+//     }
+//     __syncthreads(); // Likely not necessary, but doesn't slow down
+//   }
+// }
 
 
 /*!
@@ -73,37 +73,32 @@ int main(int argc, char *argv[]) {
   read_result = input_parser.ReadInput(argc, argv);
   if (read_result){return read_result; } // Quits on, e.g. --help
 
-  // Initialize runtime parameters determined by input
-  double dt, b0, r0, mu, newton_tolerance;
-  int n_steps, save_nth, print_precision, max_iterations;
-  std::vector<double> initial_conditions; 
-  bool time_flag;
-  std::string integrator_name;
-
   // Retrieve the values from the input parser
-  input_parser.GetValue("dt", dt);
-  input_parser.GetValue("n_steps", n_steps);
-  input_parser.GetValue("save_nth", save_nth);
-  input_parser.GetValue("initial_conditions", initial_conditions);
-  input_parser.GetValue("time", time_flag);
-  input_parser.GetValue("precision", print_precision);
-  input_parser.GetValue("b0", b0);
-  input_parser.GetValue("r0", r0);
-  input_parser.GetValue("integrator", integrator_name);
-  input_parser.GetValue("mu", mu);
-  input_parser.GetValue("tol", newton_tolerance);
-  input_parser.GetValue("max_iter", max_iterations);
+  const double kdt = input_parser.GetValue<double>("dt");
+  const int kNSteps = input_parser.GetValue<int>("n_steps");
+  const int kSaveNth = input_parser.GetValue<int>("save_nth");
+  std::vector<double> initial_conditions = 
+    input_parser.GetValue<std::vector<double> >("initial_conditions");
+  const bool kTimeFlag = input_parser.GetValue<bool>("time");
+  const int kPrintPrecision = input_parser.GetValue<int>("precision");
+  const double kB0 = input_parser.GetValue<double>("b0");
+  const double kR0 = input_parser.GetValue<double>("r0");
+  const std::string kIntegratorName = 
+    input_parser.GetValue<std::string>("integrator");
+  const double kMu = input_parser.GetValue<double>("mu");
+  const double kSolveTolerance = input_parser.GetValue<double>("tol");
+  const int kMaxIterations = input_parser.GetValue<int>("max_iter");
 
   //// Initialize model and integrator
-  AxisymmetricTokamak em_fields(b0, r0);
-  GuidingCenter guiding_center((EMFields *) &em_fields, mu);
+  AxisymmetricTokamak em_fields(kB0, kR0);
+  GuidingCenter guiding_center((EMFields *) &em_fields, kMu);
   Integrator *integrator;
-  if (integrator_name.compare("rk4")==0){
-    integrator = new RungeKutta4(dt, guiding_center);
+  if (kIntegratorName.compare("rk4")==0){
+    integrator = new RungeKutta4(kdt, guiding_center);
   }
-  else if (integrator_name.compare("ncsi")==0){
-    integrator = new NoncanonicalSymplectic(dt, guiding_center, 
-					    newton_tolerance, max_iterations);
+  else if (kIntegratorName.compare("ncsi")==0){
+    integrator = new NoncanonicalSymplectic(kdt, guiding_center, 
+					    kSolveTolerance, kMaxIterations);
   }
   else{
     std::cout << "Unrecognized integrator. Try rk4 or ncsi" 
@@ -132,7 +127,7 @@ int main(int argc, char *argv[]) {
 
   //// Record time?
   std::clock_t run_time;
-  if(time_flag){
+  if(kTimeFlag){
     run_time = std::clock();
   }
 
@@ -144,18 +139,18 @@ int main(int argc, char *argv[]) {
     for (int i=0; i<GC_DIM; ++i){
       x[i] = initial_conditions[j*GC_DIM + i];
     }
-    PrintState(t, x, print_precision); // Print initial position
+    PrintState(t, x, kPrintPrecision); // Print initial position
     // Run standard stepping
-    for (int i = 1; i <= n_steps; ++i) {
+    for (int i = 1; i <= kNSteps; ++i) {
       integrator->Step(t, x);
-      if(!(i%save_nth)){
-	PrintState( t, x, print_precision);
+      if(!(i%kSaveNth)){
+	PrintState( t, x, kPrintPrecision);
       }
     }
   }
 
   //// Print run time?
-  if(time_flag){
+  if(kTimeFlag){
     run_time = std::clock() - run_time;
     std::cout << "Run time: " << (double)run_time/CLOCKS_PER_SEC << std::endl;
   }
