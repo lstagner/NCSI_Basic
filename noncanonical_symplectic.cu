@@ -70,9 +70,7 @@ int NoncanonicalSymplectic::Step(double &t, Vector4 &x){
       x -= jacobian.inverse()*error;
       UpdateRule(t, x, error); // Check new error
     }
-    if (n_iterations == kMaxIterations_){
-      std::cout << "Newton solve did not converge!!" << std::endl;
-    }
+    // Check for not converging?
   } // end else 
 
   // Finally, check theta coordinate for exceeding 2pi rad
