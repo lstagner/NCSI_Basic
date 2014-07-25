@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <Eigen/Dense>
-#include <ctime> // For timing runtime
+#include <ctime> // For timing run time
 #include "input_parser.h"
 #include "guiding_center.h"
 #include "em_fields.h"
@@ -20,9 +20,12 @@
 #include "integrator.h"
 #include "runge-kutta4.h"
 #include "noncanonical_symplectic.h"
-#include "eigen_types.h"
+#include "eigen_types.h" // Typedef for Vector4, etc.
+#include "cuda_error.h" // HANDLE_ERROR macro
+
 
 #define GC_DIM 4 // Dimension of guiding center system
+
 
 /*!
  * \brief Prints a line to standard out giving [time x[0] x[1] ....]
@@ -39,26 +42,29 @@ void PrintState(double t, const Vector4 &x, int n_digits){
   std::cout << t << "     " << x.format(OneLineNDeep) << std::endl;
 }
 
+
 // Kernel for time advance
 // template <class I>
-// __global__ void step_positions(double *x, double t, const double kdt, // 
-// 			       const int kNSteps, const int kNParticles){
-//   // Thread identification
-//   int idx=blockIdx.x*blockDim.x + threadIdx.x;
+__global__ void step_positions(Vector4 *x, double t, const double kdt,  
+			       const int kNSteps, const int kNParticles, 
+			       const double kB0, const double kR0,
+			       const double kMu){
+  // Thread identification
+  int idx=blockIdx.x*blockDim.x + threadIdx.x;
 
-//   // Integrator initialization
-//   AxisymmetricTokamak em_fields(1.0, 100.0);
-//   GuidingCenter model((EMFields *) &em_fields, 0.21);
-//   I integrator(kdt, *(Model *) &model);
+  // Integrator initialization
+  AxisymmetricTokamak em_fields(kB0, kR0);
+  GuidingCenter model((EMFields *) &em_fields, kMu);
+  RungeKutta4 integrator(kdt, model);
 
-//   // Time advance
-//   for(int i=0; i<kNSteps; ++i){
-//     if (idx < kNParticles){
-//       integrator.Step(t, &x[idx*(model.kDimen())]);
-//     }
-//     __syncthreads(); // Likely not necessary, but doesn't slow down
-//   }
-// }
+  // Time advance
+  for(int i=0; i<kNSteps; ++i){
+    if (idx < kNParticles){
+      integrator.Step(t, x[idx]);
+    }
+    __syncthreads(); // Likely not necessary, but doesn't slow down
+  }
+}
 
 
 /*!
@@ -73,7 +79,7 @@ int main(int argc, char *argv[]) {
   read_result = input_parser.ReadInput(argc, argv);
   if (read_result){return read_result; } // Quits on, e.g. --help
 
-  // Retrieve the values from the input parser
+  //// Retrieve the values from the input parser
   const double kdt = input_parser.GetValue<double>("dt");
   const int kNSteps = input_parser.GetValue<int>("n_steps");
   const int kSaveNth = input_parser.GetValue<int>("save_nth");
@@ -88,42 +94,42 @@ int main(int argc, char *argv[]) {
   const double kMu = input_parser.GetValue<double>("mu");
   const double kSolveTolerance = input_parser.GetValue<double>("tol");
   const int kMaxIterations = input_parser.GetValue<int>("max_iter");
+  const int kNParticles = input_parser.GetValue<int>("n_particles"); 
+  const int kBlockSize = input_parser.GetValue<int>("block_size");  
 
-  //// Initialize model and integrator
-  AxisymmetricTokamak em_fields(kB0, kR0);
-  GuidingCenter guiding_center((EMFields *) &em_fields, kMu);
-  Integrator *integrator;
-  if (kIntegratorName.compare("rk4")==0){
-    integrator = new RungeKutta4(kdt, guiding_center);
+  //// Check for valid parameters
+  // Integrator
+  if (kIntegratorName.compare("rk4") && kIntegratorName.compare("ncsi") ){
+    std::cout << "Unrecognized integrator. Try rk4 or ncsi" << std::endl;
+    return 1;
   }
-  else if (kIntegratorName.compare("ncsi")==0){
-    integrator = new NoncanonicalSymplectic(kdt, guiding_center, 
-					    kSolveTolerance, kMaxIterations);
-  }
-  else{
-    std::cout << "Unrecognized integrator. Try rk4 or ncsi" 
-	      << std::endl;
+  // Initial conditions
+  if (initial_conditions.size() % (GC_DIM) ){
+    std:: cout << "Wrong number of initial conditions. Use 4." << std::endl;
     return 1;
   }
 
-  //// Initial conditions
-  // Make a vector matching the size of the ode system
-  Vector4 x; 
-  int n_initial_conditions;
+  //// Set up CUDA parameters
+  //       Should  check for cuda-capable device, here
+  cudaSetDevice(1); // Some people hop on first device while running use
+  dim3 dimBlock(kBlockSize);
+  dim3 dimGrid(ceil(kNParticles/(float)kBlockSize));
   
-  // If no initial conditions specified or they are of the wrong dimension
-  if((!initial_conditions.size()) || 
-     (initial_conditions.size() % (GC_DIM) )){
-    // Use the default initial conditions: Vector of ones
-    n_initial_conditions = 1;
-    for (int i = 0; i < x.size(); ++i) {
-      initial_conditions.push_back(1.0);
+  //// Data set up
+  // Host side
+  Vector4 x_host[kNParticles];
+  for(int i=0; i<kNParticles; ++i){
+    for(int j=0; j<GC_DIM; ++j){
+      x_host[i][j] = initial_conditions[j];
     }
   }
-  else{
-   // Otherwise, we have more than one initial condition to simulate
-   n_initial_conditions = initial_conditions.size()/GC_DIM;
-  }
+  double t = 0.0;
+  // Device side
+  Vector4 *x_device;
+  HANDLE_ERROR( cudaMalloc((void **)&x_device, 
+			   kNParticles*sizeof(Vector4)) );
+  HANDLE_ERROR( cudaMemcpy(x_device, x_host, kNParticles*sizeof(Vector4), 
+			  cudaMemcpyHostToDevice) );
 
   //// Record time?
   std::clock_t run_time;
@@ -131,31 +137,34 @@ int main(int argc, char *argv[]) {
     run_time = std::clock();
   }
 
-  //// Time advance each initial condition
-  for (int j = 0; j < n_initial_conditions; ++j){
-    integrator->Reset(); // Resets temporary variables in integrators
-    double t = 0;
-    // Set initial condition
-    for (int i=0; i<GC_DIM; ++i){
-      x[i] = initial_conditions[j*GC_DIM + i];
-    }
-    PrintState(t, x, kPrintPrecision); // Print initial position
-    // Run standard stepping
-    for (int i = 1; i <= kNSteps; ++i) {
-      integrator->Step(t, x);
-      if(!(i%kSaveNth)){
-	PrintState( t, x, kPrintPrecision);
-      }
-    }
+  // Print initial state
+  PrintState(t, x_host[0], kPrintPrecision);
+
+  //// Time advance
+  for(int i=0; i<kNSteps/kSaveNth; ++i){
+    // step_positions<RungeKutta4><<<dimGrid, dimBlock>>>(x_device, t, kdt,
+    // 						      kSaveNth, kNParticles,
+    // 						      kB0, kR0, kMu);
+    step_positions<<<dimGrid, dimBlock>>>(x_device, t, kdt, kSaveNth, 
+					  kNParticles, kB0, kR0, kMu);
+
+    HANDLE_ERROR( cudaGetLastError() ); // Check for kernel errors
+    t += kSaveNth*kdt; // Advance host time
+    // Advance host positions
+    HANDLE_ERROR( cudaMemcpy(x_host, x_device, kNParticles*sizeof(Vector4),
+			     cudaMemcpyDeviceToHost) );
+    // Print state
+    PrintState(t, x_host[0], kPrintPrecision);
   }
 
   //// Print run time?
   if(kTimeFlag){
     run_time = std::clock() - run_time;
-    std::cout << "Run time: " << (double)run_time/CLOCKS_PER_SEC << std::endl;
+    std::cout << "Run time: " << (double)run_time/CLOCKS_PER_SEC 
+	      << std::endl;
   }
 
   //// Clean up
-  delete integrator;
+  HANDLE_ERROR( cudaFree(x_device) );
   return 0;
 }

@@ -14,9 +14,9 @@ CUDA_DRIVER_DEPENDS = input_parser.o $(CUDA_INTEGRATORS) $(CUDA_MODELS) $(CUDA_F
 CXXFLAGS = -O3
 # Check whether we're on the K20 node which uses sm_35
 ifeq ($(HOSTNAME),gpusrv02.pppl.gov)
-NVCC_FLAGS=-rdc=true -arch=sm_35 -O3 #-g -G
+NVCC_FLAGS=-rdc=true -arch=sm_35 -g -G #-O3 
 else 
-NVCC_FLAGS=-rdc=true -arch=sm_20 -O3 #-g -G
+NVCC_FLAGS=-rdc=true -arch=sm_20 -g -G #-O3 
 endif
 BOOST_FLAGS=-L$(BOOST_LIBRARY_DIR) -lboost_program_options
 

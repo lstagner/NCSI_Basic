@@ -1,12 +1,12 @@
 Incorporating CUDA into NCSI_Basic
 ==================================
-Goal: Allow compiling for c++ or for CUDA. Should just be different make commands.
+Goal: Allow compiling for CPU or GPU based on the make command issued.
 
 Steps:
 1) Replace all dynamic-sized Eigen vectors with fixed DONE
 2) Insert CUDA_MEMBER decorators as appropriate DONE
 3) Implement kernel in driver
-4) Implement additional options (Repeat, block size, etc.)
+4) Implement additional options (Repeat, block size, etc.) DONE
 
 Testing:
 Original Version: 2 steps with RK4
@@ -19,4 +19,7 @@ Original Version: 2 steps with NCSI
 30.000000     104.99729004       0.03680916       0.20032016       0.12895945
 60.000000     104.98917142       0.07358952       0.40035070       0.12887834
 
-Current status: In-progress modification of drivers to use new InputParser and to implement the kernel.
+Current status: Making kSolveTolerance and kMaxIterations have default values in NoncanonicalSymplectic to be able to template the kernel. There will then be no way to alter these on the GPU code using the input options. 
+	- For basic GPU run time testing, this is OK
+	- Future work: Re-design driver to use all possible input options and to allow the current state to be saved across kernel calls (or printing from the cuda kernel). 
+	   - Priting from the kernel is easy (2.x supports printf) but seems suspect - you don't know which threads will print in which order, so your output will be rather un-structured. 
