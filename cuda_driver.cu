@@ -39,6 +39,28 @@ void PrintState(double t, const Vector4 &x, int n_digits){
   std::cout << t << "     " << x.format(OneLineNDeep) << std::endl;
 }
 
+// Kernel for time advance
+template <class I>
+__global__ void step_positions(double *x, double t, const double kdt, // 
+			       const int kNSteps, const int kNParticles){
+  // Thread identification
+  int idx=blockIdx.x*blockDim.x + threadIdx.x;
+
+  // Integrator initialization
+  AxisymmetricTokamak em_fields(1.0, 100.0);
+  GuidingCenter model((EMFields *) &em_fields, 0.21);
+  I integrator(kdt, *(Model *) &model);
+
+  // Time advance
+  for(int i=0; i<kNSteps; ++i){
+    if (idx < kNParticles){
+      integrator.Step(t, &x[idx*(model.kDimen())]);
+    }
+    __syncthreads(); // Likely not necessary, but doesn't slow down
+  }
+}
+
+
 /*!
  * \brief Body of the driver. Use program options to specify ode, integrator, dt, and n_steps.
  *

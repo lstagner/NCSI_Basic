@@ -18,3 +18,5 @@ Original Version: 2 steps with NCSI
 0.000000     105.00000000       0.00000000       0.00000000       0.12900000
 30.000000     104.99729004       0.03680916       0.20032016       0.12895945
 60.000000     104.98917142       0.07358952       0.40035070       0.12887834
+
+Current status: In-progress modification of drivers to use new InputParser and to implement the kernel.
