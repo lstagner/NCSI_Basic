@@ -29,6 +29,9 @@ int InputParser::ReadInput(int argc, char** argv){
      "Integration method")
     ("dt,h", po::value<double>()->required(), "Numerical step size dt")
     ("n_steps,N", po::value<int>()->required(), "Number of time steps")
+    ("initial_conditions,x", po::value<std::vector<double> >()
+     ->multitoken()->default_value(std::vector<double>(),""),
+     "Initial conditions")
   ;
 
   // Descriptive Options - Helps the user 
@@ -60,9 +63,6 @@ int InputParser::ReadInput(int argc, char** argv){
     ("input_file", po::value<std::string>(), "Input file defining run options")
     ("save_nth", po::value<int>()->default_value(1),
      "Save every save_nth step")
-    ("initial_conditions,x", po::value<std::vector<double> >()
-     ->multitoken()->default_value(std::vector<double>(),""),
-     "Initial conditions")
     ("n_particles,R", po::value<int>()->default_value(1), 
      "Repeat this many particles")
     ("block_size,B", po::value<int>()->default_value(32),
@@ -99,7 +99,7 @@ int InputParser::ReadInput(int argc, char** argv){
 	      << manditory_options << std::endl
 	      << output_options << std::endl
 	      << "USAGE:" << std::endl
-   	      << "driver -I <integrator> -h <double> -N <int>"
+   	      << "driver -I <integrator> -h <double> -N <int> -x <4 doubles>"
    	      << std::endl << "-OR-" << std::endl 
    	      << "driver <input_file>" << std::endl; 
     return 1;
