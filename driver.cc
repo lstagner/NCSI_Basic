@@ -51,13 +51,6 @@ int main(int argc, char *argv[]) {
   read_result = input_parser.ReadInput(argc, argv);
   if (read_result){return read_result; } // Quits on, e.g. --help
 
-  // Initialize runtime parameters determined by input
-  // double dt, b0, r0, mu, newton_tolerance;
-  // int n_steps, save_nth, print_precision, max_iterations;
-  // std::vector<double> initial_conditions; 
-  // bool time_flag;
-  // std::string integrator_name;
-
   // Retrieve the values from the input parser
   const double kdt = input_parser.GetValue<double>("dt");
   const int kNSteps = input_parser.GetValue<int>("n_steps");
