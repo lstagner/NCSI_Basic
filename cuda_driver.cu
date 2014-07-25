@@ -44,7 +44,7 @@ void PrintState(double t, const Vector4 &x, int n_digits){
 
 
 // Kernel for time advance
-// template <class I>
+template <class I>
 __global__ void step_positions(Vector4 *x, double t, const double kdt,  
 			       const int kNSteps, const int kNParticles, 
 			       const double kB0, const double kR0,
@@ -55,7 +55,7 @@ __global__ void step_positions(Vector4 *x, double t, const double kdt,
   // Integrator initialization
   AxisymmetricTokamak em_fields(kB0, kR0);
   GuidingCenter model((EMFields *) &em_fields, kMu);
-  RungeKutta4 integrator(kdt, model);
+  I integrator(kdt, model);
 
   // Time advance
   for(int i=0; i<kNSteps; ++i){
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
   //       Should  check for cuda-capable device, here
   cudaSetDevice(1); // Some people hop on first device while running use
   dim3 dimBlock(kBlockSize);
-  dim3 dimGrid(ceil(kNParticles/(float)kBlockSize));
+  dim3 dimGrid((int)ceil(kNParticles/(float)kBlockSize));
   
   //// Data set up
   // Host side
@@ -142,11 +142,15 @@ int main(int argc, char *argv[]) {
 
   //// Time advance
   for(int i=0; i<kNSteps/kSaveNth; ++i){
-    // step_positions<RungeKutta4><<<dimGrid, dimBlock>>>(x_device, t, kdt,
-    // 						      kSaveNth, kNParticles,
-    // 						      kB0, kR0, kMu);
-    step_positions<<<dimGrid, dimBlock>>>(x_device, t, kdt, kSaveNth, 
-					  kNParticles, kB0, kR0, kMu);
+    if(kIntegratorName.compare("rk4")==0){
+      step_positions<RungeKutta4><<<dimGrid, dimBlock>>>(x_device, t, kdt,
+    						      kSaveNth, kNParticles,
+    						      kB0, kR0, kMu);
+    }
+    else if(kIntegratorName.compare("ncsi")==0){
+      step_positions<NoncanonicalSymplectic><<<dimGrid, dimBlock>>>(x_device, 
+			       t, kdt, kSaveNth, kNParticles, kB0, kR0, kMu);
+    }
 
     HANDLE_ERROR( cudaGetLastError() ); // Check for kernel errors
     t += kSaveNth*kdt; // Advance host time
